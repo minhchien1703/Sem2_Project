@@ -1,4 +1,4 @@
-package com.sem2.project.Sem2_project;
+package com.sem2.sem2_project;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
