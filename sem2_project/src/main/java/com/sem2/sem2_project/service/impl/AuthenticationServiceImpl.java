@@ -7,11 +7,9 @@ import com.sem2.sem2_project.dto.response.UserResponse;
 import com.sem2.sem2_project.dto.response.LoginResponse;
 import com.sem2.sem2_project.mappper.BasicMapper;
 import com.sem2.sem2_project.model.LoggedOutToken;
-import com.sem2.sem2_project.model.Role;
 import com.sem2.sem2_project.model.User;
 import com.sem2.sem2_project.model.enums.Roles;
 import com.sem2.sem2_project.repository.LoggedOutTokenRepository;
-import com.sem2.sem2_project.repository.RoleRepository;
 import com.sem2.sem2_project.repository.UserRepository;
 import com.sem2.sem2_project.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

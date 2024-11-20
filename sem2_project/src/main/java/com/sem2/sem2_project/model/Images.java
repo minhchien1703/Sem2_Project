@@ -17,7 +17,6 @@ public class Images {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(name = "link")
     private String url;
 
     @Column(name = "name")

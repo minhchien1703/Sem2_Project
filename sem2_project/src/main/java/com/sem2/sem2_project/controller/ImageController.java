@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ImageController {
     private final ImageService imageService;
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<ImageResponse> addImage(@RequestBody ImageRequest request) {
         return ResponseEntity.ok(imageService.addImage(request));
     }
