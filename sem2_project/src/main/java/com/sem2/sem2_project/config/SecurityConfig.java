@@ -23,21 +23,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final JwtFilter filter;
-    private final UserDetailsService userDetailsService;
     private final JwtEntryPoint entryPoint;
+    private final UserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/**", "/category/ok")
-                        .permitAll()
-//                        .requestMatchers("/category").hasRole("ADMIN")
-                        .anyRequest()
-                        .authenticated())
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/category", "/image").hasRole("ADMIN")
+                        .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(entryPoint));
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -52,7 +50,6 @@ public class SecurityConfig{
     public AuthenticationManager manager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-
 
     @Bean
     public PasswordEncoder encoder() {

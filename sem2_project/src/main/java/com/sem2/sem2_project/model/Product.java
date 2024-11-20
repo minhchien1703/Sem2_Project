@@ -18,18 +18,14 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Categories categories;
+
     private double price;
-    private int stockQuantity;
+    @Column(name = "stock_quantity")
+    private int quantity;
     private double weight;
-
-    @ManyToOne
-    @JoinColumn(name = "material_id")
-    private Material material;
-
-    @ManyToOne
-    @JoinColumn(name = "color_id")
-    private Color color;
+    private int materialId;
+    private int colorId;
     private String imageUrl;
     private String size;
-
+    private String status;
 }

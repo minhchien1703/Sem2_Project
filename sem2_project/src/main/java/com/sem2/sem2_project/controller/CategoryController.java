@@ -21,8 +21,4 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.saveCategory(request));
     }
 
-    @PostMapping("/ok")
-    public ResponseEntity<PropertyResponse> saveC1ategory(@RequestBody PropertyRequest request){
-        return ResponseEntity.ok(categoryService.saveCategory(request));
-    }
 }

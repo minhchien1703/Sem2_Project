@@ -24,11 +24,4 @@ public class AuthenticationController {
     public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authenticationService.register(request));
     }
-
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request){
-        String token = request.getHeader("Authorization");
-        authenticationService.logout(token);
-        return token;
-    }
 }

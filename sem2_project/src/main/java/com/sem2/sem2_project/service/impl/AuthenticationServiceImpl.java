@@ -7,8 +7,11 @@ import com.sem2.sem2_project.dto.response.UserResponse;
 import com.sem2.sem2_project.dto.response.LoginResponse;
 import com.sem2.sem2_project.mappper.BasicMapper;
 import com.sem2.sem2_project.model.LoggedOutToken;
+import com.sem2.sem2_project.model.Role;
 import com.sem2.sem2_project.model.User;
+import com.sem2.sem2_project.model.enums.Roles;
 import com.sem2.sem2_project.repository.LoggedOutTokenRepository;
+import com.sem2.sem2_project.repository.RoleRepository;
 import com.sem2.sem2_project.repository.UserRepository;
 import com.sem2.sem2_project.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +36,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()));
+
+//      save security information in SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = userRepository.findByUsername(request.getUsername());
+
+//      find user by email
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new RuntimeException("Email not found" + request.getEmail()));
+
+//      create jwt token
         String token = jwtProvider.generateToken(authentication);
+
         UserResponse userResponse = BasicMapper.INSTANCE.mapToUserRequest(user);
         return new LoginResponse(userResponse, token);
     }
@@ -44,12 +59,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public UserResponse register(RegisterRequest request) {
         User user = BasicMapper.INSTANCE.mapToUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+//        set default role is USER
+        user.setRole(Roles.USER);
+
         User savedUser = userRepository.save(user);
         return BasicMapper.INSTANCE.mapToUserRequest(savedUser);
     }
 
     @Override
-    public void logout(String token) {
+    public boolean logout(String token) {
         if (loggedOutTokenRepository.findByToken(token).isPresent()) {
             throw new IllegalStateException("Token is already logged out");
         }
@@ -57,6 +76,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         LoggedOutToken loggedOutToken = new LoggedOutToken();
         loggedOutToken.setToken(token);
         loggedOutTokenRepository.save(loggedOutToken);
+        return true;
     }
 
 

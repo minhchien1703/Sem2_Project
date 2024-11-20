@@ -29,16 +29,16 @@ public class JwtProvider {
     private final LoggedOutTokenRepository loggedOutTokenRepository;
 
     public String generateToken(Authentication authentication) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("roles", authentication.getAuthorities());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", authentication.getAuthorities());
 
         User user = (User) authentication.getPrincipal();
 
         return Jwts.builder()
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .setSubject(user.getUsername())
-                .addClaims(map)
+                .setIssuedAt(new Date()) //created token times
+                .setExpiration(new Date(System.currentTimeMillis() + expiration)) //the expiration time of a token
+                .setSubject(user.getEmail())
+                .addClaims(claims) // to add other information to the claims
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
@@ -52,8 +52,12 @@ public class JwtProvider {
         }
     }
 
-    public String getUsernameFormToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+    public String getEmailFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject(); //get email from subject
     }
 
 
