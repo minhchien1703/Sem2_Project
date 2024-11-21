@@ -8,7 +8,6 @@ import com.sem2.sem2_project.model.Product;
 import com.sem2.sem2_project.repository.ImageRepository;
 import com.sem2.sem2_project.repository.ProductRepository;
 import com.sem2.sem2_project.service.ImageService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,18 +1,14 @@
 package com.sem2.sem2_project.mappper;
 
-import com.sem2.sem2_project.dto.request.ImageRequest;
-import com.sem2.sem2_project.dto.request.PropertyRequest;
-import com.sem2.sem2_project.dto.request.RegisterRequest;
-import com.sem2.sem2_project.dto.response.ImageResponse;
-import com.sem2.sem2_project.dto.response.UserResponse;
-import com.sem2.sem2_project.dto.response.PropertyResponse;
-import com.sem2.sem2_project.model.Categories;
-import com.sem2.sem2_project.model.Images;
-import com.sem2.sem2_project.model.User;
+import com.sem2.sem2_project.dto.request.*;
+import com.sem2.sem2_project.dto.response.*;
+import com.sem2.sem2_project.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+import java.util.List;
+
+@Mapper(componentModel = "spring")
 public interface BasicMapper {
     BasicMapper INSTANCE = Mappers.getMapper(BasicMapper.class);
 
@@ -22,14 +18,22 @@ public interface BasicMapper {
     User mapToUser(RegisterRequest request);
 
     //    categories
-    PropertyResponse toCategory(Categories categories);
+    PropertyResponse toCategory(Category category);
 
-    Categories toCategoryRequest(PropertyRequest request);
+    Category toCategoryRequest(PropertyRequest request);
 
     //    image
     Images toImageRequest(ImageRequest request);
 
     ImageResponse toImage(Images images);
 
+    //    orders
+    Order toOrderRequest(OrderRequest request);
+
+
+//    orderDetails
+    OrderDetails toOrderDetails(OrderDetailsRequest request);
+
+    OrderDetailsResponse toOrderDetailsResponse(OrderDetails orderDetails);
 
 }

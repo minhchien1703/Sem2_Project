@@ -38,14 +38,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 //      save security information in SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-//      find user by email
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new RuntimeException("Email not found" + request.getEmail()));
-
 //      create jwt token
         String token = jwtProvider.generateToken(authentication);
 
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new RuntimeException("Email not found" + request.getEmail()));
         UserResponse userResponse = BasicMapper.INSTANCE.mapToUserRequest(user);
         return new LoginResponse(userResponse, token);
     }

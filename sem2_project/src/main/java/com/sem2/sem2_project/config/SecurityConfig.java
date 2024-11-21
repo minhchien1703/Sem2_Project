@@ -35,7 +35,9 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/category", "/image/add").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/category/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/order/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/orderDetails/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(entryPoint));
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
