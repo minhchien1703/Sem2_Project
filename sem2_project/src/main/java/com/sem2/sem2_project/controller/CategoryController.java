@@ -1,14 +1,11 @@
 package com.sem2.sem2_project.controller;
 
-import com.sem2.sem2_project.dto.request.PropertyRequest;
-import com.sem2.sem2_project.dto.response.PropertyResponse;
+import com.sem2.sem2_project.dto.request.CategoryRequest;
+import com.sem2.sem2_project.dto.response.CategoryResponse;
 import com.sem2.sem2_project.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/category")
@@ -16,9 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @PostMapping
-    public ResponseEntity<PropertyResponse> saveCategory(@RequestBody PropertyRequest request){
-        return ResponseEntity.ok(categoryService.saveCategory(request));
+    @PostMapping("/save")
+    public String saveCategory(@RequestBody CategoryRequest request){
+        return categoryService.saveCategory(request);
     }
+
+    @DeleteMapping("/del")
+    public String deleteCategory(@RequestParam int id){
+        return categoryService.deleteCategory(id);
+    }
+
+
 
 }

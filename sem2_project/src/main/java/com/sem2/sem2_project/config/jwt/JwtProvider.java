@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -30,9 +31,12 @@ public class JwtProvider {
 
     public String generateToken(Authentication authentication) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", authentication.getAuthorities());
-
         User user = (User) authentication.getPrincipal();
+
+        claims.put("roles", authentication.getAuthorities());
+        claims.put("email", user.getEmail());
+        claims.put("username", user.getUsername());
+        claims.put("userId", user.getId());
 
         return Jwts.builder()
                 .setIssuedAt(new Date()) //created token times
@@ -58,6 +62,13 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject(); //get email from subject
+    }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
 

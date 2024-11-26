@@ -10,8 +10,10 @@ import java.util.List;
 
 @Repository
 public interface OrderDetailsRepository extends JpaRepository<OrderDetails, Integer> {
-//    @Query("""
-//                SELECT od FROM OrderDetails od WHERE od.order.id = :order_id
-//            """)
+
     List<OrderDetails> findByOrderId(int orderId);
+
+    void deleteByOrderId(int orderId);
+
+
 }

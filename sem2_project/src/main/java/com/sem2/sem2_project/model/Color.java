@@ -13,4 +13,7 @@ public class Color {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+
+    @Column(length = 7)
+    private String hexCode;
 }

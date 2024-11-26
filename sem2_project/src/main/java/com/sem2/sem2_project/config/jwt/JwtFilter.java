@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,9 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.replace("Bearer", "").trim();
 
-//          check token in blacklist
             if (tokenService.isTokenBlacklisted(token)) {
-                System.out.println("Token is blacklisted");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Token has been disabled");
                 return;
@@ -51,15 +50,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 } catch (Exception e) {
-                    System.out.println("Authentication failed: " + e.getMessage());
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Authentication failed");
                     return;
                 }
             } else {
-                System.out.println("Token validation failed");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Validation token ");
+
                 return;
             }
         }

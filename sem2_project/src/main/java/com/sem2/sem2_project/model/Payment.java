@@ -4,18 +4,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.Set;
-
 @Entity
 @Getter
 @Setter
-@Table(name = "room")
-public class Room {
+@Table(name = "payment_method")
+public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    private String name;
+    private String methodName;
+    private String description;
 
 }

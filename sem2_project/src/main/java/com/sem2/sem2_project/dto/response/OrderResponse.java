@@ -8,6 +8,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class OrderResponse {
@@ -17,6 +18,7 @@ public class OrderResponse {
     private LocalDateTime date;
     private double totalAmount;
     private String shippingAddress;
-    private String paymentMethod;
+    private String paymentName;
     private String status;
+    private List<OrderDetailsResponse> orderDetails;
 }

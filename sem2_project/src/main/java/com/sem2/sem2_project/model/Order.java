@@ -22,9 +22,6 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Transient
-    private UserResponse userResponse;
-
     //    add relational with orderDetails
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetails> orderDetails;
@@ -36,8 +33,9 @@ public class Order {
     private double totalAmount;
     private String shippingAddress;
 
-    @Column(name = "payment_info")
-    private String paymentMethod;
+    @OneToOne
+    @JoinColumn(name = "payment_method_id")
+    private Payment payment;
 
     @ManyToOne
     @JoinColumn(name = "status_id")

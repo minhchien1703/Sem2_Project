@@ -34,10 +34,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/public/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/category/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/order/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/orderDetails/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/cart/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(entryPoint));
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

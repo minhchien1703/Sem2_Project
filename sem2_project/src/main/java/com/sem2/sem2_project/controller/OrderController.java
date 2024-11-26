@@ -1,12 +1,11 @@
 package com.sem2.sem2_project.controller;
 
+import com.sem2.sem2_project.dto.request.OrderUpdateStatusRequest;
 import com.sem2.sem2_project.dto.request.OrderRequest;
 import com.sem2.sem2_project.dto.response.OrderResponse;
-import com.sem2.sem2_project.model.Order;
 import com.sem2.sem2_project.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +22,8 @@ public class OrderController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<OrderResponse> updateOrder(@RequestParam int id, @RequestBody OrderRequest orderRequest) {
-        return ResponseEntity.ok(orderService.updateOrder(id, orderRequest));
+    public boolean updateOrder(@RequestParam int id, @RequestBody OrderUpdateStatusRequest orderRequest) {
+        return orderService.updateOrder(id, orderRequest);
     }
 
     @DeleteMapping("/delete")

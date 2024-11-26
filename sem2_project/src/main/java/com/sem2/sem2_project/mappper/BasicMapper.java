@@ -6,21 +6,20 @@ import com.sem2.sem2_project.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface BasicMapper {
     BasicMapper INSTANCE = Mappers.getMapper(BasicMapper.class);
 
     //    user
-    UserResponse mapToUserRequest(User user);
+    UserResponse mapToUserResponse(User user);
 
     User mapToUser(RegisterRequest request);
 
     //    categories
-    PropertyResponse toCategory(Category category);
+    CategoryResponse mapToCategoryResponse(Category category);
 
-    Category toCategoryRequest(PropertyRequest request);
+    Category mapToCategory(CategoryRequest categoryRequest);
 
     //    image
     Images toImageRequest(ImageRequest request);
@@ -28,12 +27,11 @@ public interface BasicMapper {
     ImageResponse toImage(Images images);
 
     //    orders
-    Order toOrderRequest(OrderRequest request);
+    Order orderRequestToOrder(OrderRequest request);
 
+    //    cart
+    CartResponse toCartResponse(Cart cart);
 
-//    orderDetails
-    OrderDetails toOrderDetails(OrderDetailsRequest request);
-
-    OrderDetailsResponse toOrderDetailsResponse(OrderDetails orderDetails);
+//    product
 
 }

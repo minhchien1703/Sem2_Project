@@ -20,7 +20,7 @@
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private int id;
 
-        private String userName;
+        private String username;
         private String firstName;
         private String lastName;
         private String email;
@@ -38,7 +38,7 @@
 
         @Override
         public String getUsername() {
-            return this.userName;
+            return this.username;
         }
 
     }

@@ -36,14 +36,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         request.getEmail(),
                         request.getPassword()));
 
-//      save security information in SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(authentication);
-//      create jwt token
         String token = jwtProvider.generateToken(authentication);
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new RuntimeException("Email not found" + request.getEmail()));
-        UserResponse userResponse = BasicMapper.INSTANCE.mapToUserRequest(user);
+        UserResponse userResponse = BasicMapper.INSTANCE.mapToUserResponse(user);
+        userResponse.setUsername(user.getUsername());
         return new LoginResponse(userResponse, token);
     }
 
@@ -52,11 +51,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = BasicMapper.INSTANCE.mapToUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-//        set default role is USER
         user.setRole(Roles.USER);
 
         User savedUser = userRepository.save(user);
-        return BasicMapper.INSTANCE.mapToUserRequest(savedUser);
+
+        UserResponse userResponse = BasicMapper.INSTANCE.mapToUserResponse(savedUser);
+        userResponse.setUsername(user.getUsername());
+        return userResponse;
     }
 
     @Override
@@ -69,6 +70,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         loggedOutToken.setToken(token);
         loggedOutTokenRepository.save(loggedOutToken);
         return true;
+    }
+
+    @Override
+    public User getCurrenAuthenticatedUser() {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        return userRepository.findByUsername(authentication.getName());
     }
 
 

@@ -12,4 +12,6 @@ public interface AuthenticationService {
     UserResponse register(RegisterRequest request);
 
     boolean logout(String token);
+
+    User getCurrenAuthenticatedUser();
 }
