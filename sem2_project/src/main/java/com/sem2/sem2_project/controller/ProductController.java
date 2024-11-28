@@ -1,5 +1,6 @@
 package com.sem2.sem2_project.controller;
 
+import com.sem2.sem2_project.dto.request.ProductPriceRequest;
 import com.sem2.sem2_project.dto.request.ProductRequest;
 import com.sem2.sem2_project.dto.response.ProductResponse;
 import com.sem2.sem2_project.service.ProductService;
@@ -29,6 +30,11 @@ public class ProductController {
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         Pageable pageable = PageRequest.of(0, 9);
         return ResponseEntity.ok(productService.getLimitedProducts(pageable));
+    }
+
+    @GetMapping("/getByPrice")
+    public ResponseEntity<List<ProductResponse>> getProductsByPrice(@RequestBody ProductPriceRequest request) {
+        return ResponseEntity.ok(productService.getProductByPrice(request));
     }
 
 

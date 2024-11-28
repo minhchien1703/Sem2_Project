@@ -20,39 +20,25 @@ public class Product {
     private int id;
     private String name;
     private String description;
-
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
-
     private double price;
-
     @Column(name = "stock_quantity")
     private int quantity;
-
     private double weight;
-
     @ManyToOne
     @JoinColumn(name = "material_id")
     private Material material;
-
     @ManyToOne
     @JoinColumn(name = "color_id")
     private Color color;
-
-    @Column(name = "image_url")
     private String imageUrl;
-
     private String size;
-
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
-
     private double rating;
-
-    @Column(name = "sale")
     private int sale;
-
     @ManyToMany
     @JoinTable(
             name = "product_room",

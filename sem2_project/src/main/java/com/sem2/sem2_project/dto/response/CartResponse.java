@@ -12,10 +12,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class CartResponse {
-    private int userId;
-    private int productId;
-    private String productName;
+    private ProductResponse product;
     private int quantity;
-    private double price;
-    private double totalPrice;
 }

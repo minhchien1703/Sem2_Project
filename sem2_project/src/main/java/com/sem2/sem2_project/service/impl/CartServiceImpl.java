@@ -3,18 +3,19 @@ package com.sem2.sem2_project.service.impl;
 import com.sem2.sem2_project.config.jwt.JwtProvider;
 import com.sem2.sem2_project.dto.request.CartRequest;
 import com.sem2.sem2_project.dto.response.CartResponse;
-import com.sem2.sem2_project.mappper.BasicMapper;
 import com.sem2.sem2_project.model.Cart;
 import com.sem2.sem2_project.model.Product;
 import com.sem2.sem2_project.model.User;
+import com.sem2.sem2_project.model.enums.Status;
 import com.sem2.sem2_project.repository.CartRepository;
 import com.sem2.sem2_project.repository.ProductRepository;
 import com.sem2.sem2_project.repository.UserRepository;
+import com.sem2.sem2_project.repository.projection.CartProjection;
 import com.sem2.sem2_project.service.AuthenticationService;
 import com.sem2.sem2_project.service.CartService;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,59 +30,48 @@ public class CartServiceImpl implements CartService {
     private final AuthenticationService authenticationService;
 
     @Override
-    public CartResponse addToCart(CartRequest cartRequest) {
+    public String addToCart(CartRequest request) {
         User user = authenticationService.getCurrenAuthenticatedUser();
 
-        Product product = productRepository.findById(cartRequest.getProductId())
+        Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        Cart cart = new Cart();
-        cart.setUser(user);
-        cart.setProduct(product);
-        cart.setQuantity(cartRequest.getQuantity());
-
-        CartResponse cartResponse = BasicMapper.INSTANCE.toCartResponse(cartRepository.save(cart));
-        cartResponse.setUserId(user.getId());
-        cartResponse.setProductId(product.getId());
-        cartResponse.setProductName(product.getName());
-        cartResponse.setQuantity(cartRequest.getQuantity());
-        return cartResponse;
-    }
-
-    @Override
-    public List<CartResponse> getAllCartsByUserId() {
-        User user = authenticationService.getCurrenAuthenticatedUser();
-
-        List<Cart> cartList = cartRepository.findByUserId(user.getId());
-        List<CartResponse> cartResponseList = new ArrayList<>();
-        for (Cart cart : cartList) {
-            CartResponse cartResponse = new CartResponse();
-            cartResponse.setUserId(user.getId());
-            cartResponse.setProductId(cart.getProduct().getId());
-            cartResponse.setProductName(cart.getProduct().getName());
-            cartResponse.setQuantity(cart.getQuantity());
-
-            double price = cart.getProduct().getPrice();
-            cartResponse.setPrice(price);
-
-            double total = cart.getQuantity() * price;
-            cartResponse.setTotalPrice(total);
-
-            cartResponseList.add(cartResponse);
+        Cart cart = cartRepository.findCartByProductIdAndUserId(product.getId(), user.getId());
+        if (cart != null) {
+            cart.setQuantity(cart.getQuantity() + request.getQuantity());
+        }else {
+            cart = new Cart();
+            cart.setUser(user);
+            cart.setProduct(product);
+            cart.setStatus(Status.ACTIVE);
+            if (request.getQuantity() > 0) {
+                cart.setQuantity(request.getQuantity());
+            }else {
+                cart.setQuantity(1);
+            }
         }
-        return cartResponseList;
+        cartRepository.save(cart);
+        return "Cart successfully added to the cart";
     }
 
     @Override
-    public boolean updateCart(CartRequest cart) {
-        return false;
+    public List<CartProjection> getAllCartsByUserId() {
+        User user = authenticationService.getCurrenAuthenticatedUser();
+        return cartRepository.findCartByUserId(user.getId(), Status.ACTIVE);
     }
 
+    @Transactional
     @Override
-    public String deleteCart(int id) {
-        Cart cart = cartRepository.findById(id).orElseThrow(() -> new RuntimeException("Cart not found"));
-        cartRepository.delete(cart);
-        return "Deleted";
+    public String deleteProductFromCart(int productId) {
+        User user = authenticationService.getCurrenAuthenticatedUser();
+        Cart productInTheCart = cartRepository.findCartByProductIdAndUserId(productId, user.getId());
+        if (productInTheCart != null) {
+            cartRepository.deleteCartByProductId(productInTheCart.getId());
+        }else {
+            return "Cart not found";
+        }
+        return "Delete cart successfully";
     }
+
 
 }

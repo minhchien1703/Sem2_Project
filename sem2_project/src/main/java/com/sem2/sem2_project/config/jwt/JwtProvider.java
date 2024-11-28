@@ -27,16 +27,11 @@ public class JwtProvider {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    private final LoggedOutTokenRepository loggedOutTokenRepository;
-
     public String generateToken(Authentication authentication) {
         Map<String, Object> claims = new HashMap<>();
         User user = (User) authentication.getPrincipal();
 
         claims.put("roles", authentication.getAuthorities());
-        claims.put("email", user.getEmail());
-        claims.put("username", user.getUsername());
-        claims.put("userId", user.getId());
 
         return Jwts.builder()
                 .setIssuedAt(new Date()) //created token times
@@ -62,13 +57,6 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject(); //get email from subject
-    }
-
-    public Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
     }
 
 

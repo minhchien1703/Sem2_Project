@@ -1,5 +1,6 @@
 package com.sem2.sem2_project.service;
 
+import com.sem2.sem2_project.dto.request.ProductPriceRequest;
 import com.sem2.sem2_project.dto.request.ProductRequest;
 import com.sem2.sem2_project.dto.response.ProductResponse;
 import com.sem2.sem2_project.model.Product;
@@ -13,4 +14,6 @@ public interface ProductService {
     List<ProductResponse> getLimitedProducts(Pageable pageable);
 
     String updateProduct(int id, ProductRequest product);
+
+    List<ProductResponse> getProductByPrice(ProductPriceRequest productPriceRequest);
 }

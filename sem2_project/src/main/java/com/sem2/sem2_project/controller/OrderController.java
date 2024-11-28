@@ -11,24 +11,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/order")
+@RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/create")
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<String> createOrder(@RequestBody OrderRequest orderRequest) {
         return ResponseEntity.ok(orderService.createOrder(orderRequest));
     }
 
     @PutMapping("/update")
-    public boolean updateOrder(@RequestParam int id, @RequestBody OrderUpdateStatusRequest orderRequest) {
-        return orderService.updateOrder(id, orderRequest);
+    public ResponseEntity<Boolean> updateOrder(@RequestParam int id, @RequestBody OrderUpdateStatusRequest orderRequest) {
+        return ResponseEntity.ok(orderService.updateOrder(id, orderRequest));
     }
 
     @DeleteMapping("/delete")
-    public boolean deleteOrder(@RequestParam int id) {
-        return orderService.deleteOrder(id);
+    public ResponseEntity<Boolean> deleteOrder(@RequestParam int id) {
+        return ResponseEntity.ok(orderService.deleteOrder(id));
     }
 
     @GetMapping("/all")
@@ -37,3 +37,4 @@ public class OrderController {
     }
 
 }
+

@@ -3,10 +3,7 @@ package com.sem2.sem2_project.controller;
 import com.sem2.sem2_project.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -18,4 +15,6 @@ public class UserController {
         String tokenWithoutBearer = token.replace("Bearer ", "");
         return ResponseEntity.ok(authenticationService.logout(tokenWithoutBearer));
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.sem2.sem2_project.service.impl;
 
+import com.sem2.sem2_project.dto.request.ProductPriceRequest;
 import com.sem2.sem2_project.dto.request.ProductRequest;
 import com.sem2.sem2_project.dto.response.ProductResponse;
 import com.sem2.sem2_project.mappper.BasicMapper;
@@ -106,6 +107,11 @@ public class ProductServiceImpl implements ProductService {
         return "Product updated successfully";
     }
 
+    @Override
+    public List<ProductResponse> getProductByPrice(ProductPriceRequest priceRequest) {
+        List<Product> productList = productRepository.findProductByPrice(priceRequest.getFirstPrice(), priceRequest.getLastPrice());
+        return BasicMapper.INSTANCE.toProductResponseList(productList);
+    }
 
 
 }
