@@ -34,6 +34,9 @@ public interface BasicMapper {
 
     ProductResponse toProductResponse(Product product);
 
-//    product
+    //    product
     List<ProductResponse> toProductResponseList(List<Product> productList);
+
+    Product toProduct(ProductRequest productRequest);
+
 }

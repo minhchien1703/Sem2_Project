@@ -6,7 +6,7 @@ import com.sem2.sem2_project.dto.response.CartResponse;
 import com.sem2.sem2_project.model.Cart;
 import com.sem2.sem2_project.model.Product;
 import com.sem2.sem2_project.model.User;
-import com.sem2.sem2_project.model.enums.Status;
+import com.sem2.sem2_project.model.enums.CartStatus;
 import com.sem2.sem2_project.repository.CartRepository;
 import com.sem2.sem2_project.repository.ProductRepository;
 import com.sem2.sem2_project.repository.UserRepository;
@@ -24,15 +24,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
-    private final UserRepository userRepository;
     private final ProductRepository productRepository;
-    private final JwtProvider jwtProvider;
     private final AuthenticationService authenticationService;
 
     @Override
-    public String addToCart(CartRequest request) {
-        User user = authenticationService.getCurrenAuthenticatedUser();
-
+    public String addToCart(CartRequest request, User user) {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -43,7 +39,7 @@ public class CartServiceImpl implements CartService {
             cart = new Cart();
             cart.setUser(user);
             cart.setProduct(product);
-            cart.setStatus(Status.ACTIVE);
+            cart.setStatus(CartStatus.ACTIVE);
             if (request.getQuantity() > 0) {
                 cart.setQuantity(request.getQuantity());
             }else {
@@ -57,19 +53,14 @@ public class CartServiceImpl implements CartService {
     @Override
     public List<CartProjection> getAllCartsByUserId() {
         User user = authenticationService.getCurrenAuthenticatedUser();
-        return cartRepository.findCartByUserId(user.getId(), Status.ACTIVE);
+        System.out.println(user.getId());
+        return cartRepository.findCartByUserId(user.getId(), CartStatus.ACTIVE);
     }
 
     @Transactional
     @Override
-    public String deleteProductFromCart(int productId) {
-        User user = authenticationService.getCurrenAuthenticatedUser();
-        Cart productInTheCart = cartRepository.findCartByProductIdAndUserId(productId, user.getId());
-        if (productInTheCart != null) {
-            cartRepository.deleteCartByProductId(productInTheCart.getId());
-        }else {
-            return "Cart not found";
-        }
+    public String deleteProductFromCart(int cartId) {
+        cartRepository.deleteById(cartId);
         return "Delete cart successfully";
     }
 

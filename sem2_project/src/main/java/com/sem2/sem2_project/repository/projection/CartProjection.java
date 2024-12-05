@@ -6,11 +6,12 @@ public interface CartProjection {
     int getQuantity();
 
     interface ProductInfoProjection {
-        String getImageUrl();
         String getName();
         double getPrice();
         ColorInfo getColor();
         String getStatus();
+        String getDescription();
+        int getSale();
 
         interface ColorInfo {
             int getId();

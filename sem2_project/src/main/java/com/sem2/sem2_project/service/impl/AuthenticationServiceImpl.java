@@ -50,11 +50,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public UserResponse register(RegisterRequest request) {
         User user = BasicMapper.INSTANCE.mapToUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
         user.setRole(Roles.USER);
-
         User savedUser = userRepository.save(user);
-
         UserResponse userResponse = BasicMapper.INSTANCE.mapToUserResponse(savedUser);
         userResponse.setUsername(user.getUsername());
         return userResponse;

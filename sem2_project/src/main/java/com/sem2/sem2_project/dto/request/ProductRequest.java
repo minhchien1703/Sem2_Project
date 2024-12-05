@@ -18,7 +18,6 @@ public class ProductRequest {
     private double weight;
     private int materialId;
     private int colorId;
-    private String imageUrl;
     private String size;
     private ProductStatus status;
     private int sale;

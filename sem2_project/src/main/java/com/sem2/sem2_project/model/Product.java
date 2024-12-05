@@ -33,7 +33,8 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "color_id")
     private Color color;
-    private String imageUrl;
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    private List<Images> images;
     private String size;
     @Enumerated(EnumType.STRING)
     private ProductStatus status;

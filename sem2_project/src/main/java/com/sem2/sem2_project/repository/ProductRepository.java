@@ -1,6 +1,7 @@
 package com.sem2.sem2_project.repository;
 
 import com.sem2.sem2_project.model.Product;
+import com.sem2.sem2_project.repository.projection.ProductProjection;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,10 +13,8 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-    @Query(value = """
-            SELECT p FROM Product p ORDER BY p.id DESC 
-            """)
-    List<Product> getLimitedProducts(Pageable pageable);
+    @Query(value = "select p.*, i.url from products p join images i on p.id = i.product_id order by p.id desc ", nativeQuery = true)
+    List<Product> getLimitedProducts();
 
     @Query("""
             SELECT p FROM Product p WHERE p.price BETWEEN :firstPrice AND :lastPrice

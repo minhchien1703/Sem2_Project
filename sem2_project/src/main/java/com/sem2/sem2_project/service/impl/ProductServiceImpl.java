@@ -9,11 +9,8 @@ import com.sem2.sem2_project.model.enums.ProductStatus;
 import com.sem2.sem2_project.repository.*;
 import com.sem2.sem2_project.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,6 +24,7 @@ public class ProductServiceImpl implements ProductService {
     private final MaterialRepository materialRepository;
     private final ColorRepository colorRepository;
     private final RoomRepository roomRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     public String addProduct(ProductRequest productRequest) {
@@ -44,17 +42,8 @@ public class ProductServiceImpl implements ProductService {
                         .orElseThrow(() -> new RuntimeException("Room not found with id: " + id)))
                 .collect(Collectors.toSet());
 
-        Product product = new Product();
-        product.setName(productRequest.getName());
-        product.setDescription(productRequest.getDescription());
-        product.setPrice(productRequest.getPrice());
-        product.setQuantity(productRequest.getQuantity());
-        product.setWeight(productRequest.getWeight());
-        product.setImageUrl(productRequest.getImageUrl());
-        product.setSize(productRequest.getSize());
+        Product product = BasicMapper.INSTANCE.toProduct(productRequest);
         product.setRating(5);
-        product.setSale(productRequest.getSale());
-
         product.setCategory(category);
         product.setMaterial(material);
         product.setColor(color);
@@ -65,22 +54,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> getLimitedProducts(Pageable pageable) {
-        List<Product> productList = productRepository.getLimitedProducts(pageable);
-
-        List<ProductResponse> productResponses = new ArrayList<>();
-        for (Product product : productList) {
-            ProductResponse productResponse = new ProductResponse();
-            productResponse.setId(product.getId());
-            productResponse.setName(product.getName());
-            productResponse.setPrice(product.getPrice());
-            productResponse.setImageUrl(product.getImageUrl());
-            productResponse.setRating(product.getRating());
-            productResponse.setDescription(product.getDescription());
-            productResponse.setSale(product.getSale());
-            productResponses.add(productResponse);
-        }
-        return productResponses;
+    public List<Product> getProductForHome() {
+        return productRepository.getLimitedProducts();
     }
 
     @Override
@@ -98,7 +73,6 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(productRequest.getPrice());
         product.setQuantity(productRequest.getQuantity());
         product.setWeight(productRequest.getWeight());
-        product.setImageUrl(productRequest.getImageUrl());
         product.setSize(productRequest.getSize());
         product.setSale(productRequest.getSale());
         product.setStatus(productRequest.getStatus());
@@ -111,6 +85,12 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponse> getProductByPrice(ProductPriceRequest priceRequest) {
         List<Product> productList = productRepository.findProductByPrice(priceRequest.getFirstPrice(), priceRequest.getLastPrice());
         return BasicMapper.INSTANCE.toProductResponseList(productList);
+    }
+
+    @Override
+    public Product findById(int id) {
+        return productRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Product not found with id: " + id));
     }
 
 

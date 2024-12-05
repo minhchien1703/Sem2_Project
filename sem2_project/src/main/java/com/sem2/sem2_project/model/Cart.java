@@ -1,6 +1,7 @@
 package com.sem2.sem2_project.model;
 
-import com.sem2.sem2_project.model.enums.Status;
+import com.sem2.sem2_project.model.enums.CartStatus;
+import com.sem2.sem2_project.model.enums.CartStatus;
 import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class Cart {
     private Product product;
     private int quantity;
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private CartStatus status;
     public Cart(User user, int quantity, Product product) {
         this.user = user;
         this.quantity = quantity;

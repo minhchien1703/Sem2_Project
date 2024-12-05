@@ -1,7 +1,7 @@
 package com.sem2.sem2_project.repository;
 
 import com.sem2.sem2_project.model.Cart;
-import com.sem2.sem2_project.model.enums.Status;
+import com.sem2.sem2_project.model.enums.CartStatus;
 import com.sem2.sem2_project.repository.projection.CartProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -27,7 +27,7 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
             AND c.status = :status
             """)
     List<CartProjection> findCartByUserId(@Param("userId") int userId,
-                                          @Param("status") Status status);
+                                          @Param("status") CartStatus status);
 
     @Modifying
     @Query("""

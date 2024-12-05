@@ -12,13 +12,12 @@ public class Images {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    @Column(name = "url")
+    private String url;
+    private String type;
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
-
-    private String url;
-
-    @Column(name = "name")
-    private String imageName;
+    @Column(name = "public_id")
+    private String publicId;
 }
