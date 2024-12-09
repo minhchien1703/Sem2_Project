@@ -31,9 +31,6 @@ public class Cart {
     private int quantity;
     @Enumerated(EnumType.STRING)
     private CartStatus status;
-    public Cart(User user, int quantity, Product product) {
-        this.user = user;
-        this.quantity = quantity;
-        this.product = product;
-    }
+    @Column(name = "sub_total")
+    private Double subTotal;
 }

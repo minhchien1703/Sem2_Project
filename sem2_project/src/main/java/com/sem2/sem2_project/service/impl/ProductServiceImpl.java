@@ -5,10 +5,12 @@ import com.sem2.sem2_project.dto.request.ProductRequest;
 import com.sem2.sem2_project.dto.response.ProductResponse;
 import com.sem2.sem2_project.mappper.BasicMapper;
 import com.sem2.sem2_project.model.*;
+import com.sem2.sem2_project.model.Color;
 import com.sem2.sem2_project.model.enums.ProductStatus;
 import com.sem2.sem2_project.repository.*;
 import com.sem2.sem2_project.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,8 +56,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProductForHome() {
-        return productRepository.getLimitedProducts();
+    public List<ProductResponse> getProductByTypePopular(String type, Pageable pageable) {
+        List<Product> products = productRepository.findProductByPopular(type, pageable);
+        List<ProductResponse> productResponses = BasicMapper.INSTANCE.toProductResponseList(products);
+
+        for (ProductResponse productResponse : productResponses) {
+            List<Images> images = imageRepository.findImagesByProductId(productResponse.getId());
+            for (Images image : images) {
+                if (image.getType() != null && image.getType().equals("AVATAR")) {
+                    productResponse.setImage(image.getUrl());
+                }
+            }
+        }
+        return productResponses;
     }
 
     @Override
@@ -88,9 +101,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product findById(int id) {
-        return productRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Product not found with id: " + id));
+    public ProductResponse findById(int id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+
     }
 
 

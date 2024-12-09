@@ -12,13 +12,20 @@ import com.sem2.sem2_project.model.enums.Roles;
 import com.sem2.sem2_project.repository.LoggedOutTokenRepository;
 import com.sem2.sem2_project.repository.UserRepository;
 import com.sem2.sem2_project.service.AuthenticationService;
+import com.sem2.sem2_project.valid.ValidationError;
+import com.sem2.sem2_project.valid.ValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,15 +54,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public UserResponse register(RegisterRequest request) {
+    public String register(RegisterRequest request) {
+        List<ValidationError> errors = new ArrayList<>();
+
+        if (userRepository.findByUsername(request.getUsername()) != null) {
+            errors.add(new ValidationError("username", "Username is already taken"));
+        }
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            errors.add(new ValidationError("email", "Email is already registered"));
+        }
+        if (userRepository.findByPhone(request.getPhone()) != null) {
+            errors.add(new ValidationError("phone", "Phone number is already registered"));
+        }
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
+
         User user = BasicMapper.INSTANCE.mapToUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Roles.USER);
-        User savedUser = userRepository.save(user);
-        UserResponse userResponse = BasicMapper.INSTANCE.mapToUserResponse(savedUser);
-        userResponse.setUsername(user.getUsername());
-        return userResponse;
+        userRepository.save(user);
+        return "Registered successfully";
     }
+
 
     @Override
     public boolean logout(String token) {

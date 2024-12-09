@@ -1,5 +1,6 @@
 package com.sem2.sem2_project.repository;
 
+import com.sem2.sem2_project.dto.response.ProductResponse;
 import com.sem2.sem2_project.model.Product;
 import com.sem2.sem2_project.repository.projection.ProductProjection;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +23,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findProductByPrice(
             @Param("firstPrice") double firstPrice,
             @Param("lastPrice") double lastPrice);
+
+    @Query(value = """
+                SELECT p FROM Product p WHERE p.type = :type
+            """)
+    List<Product> findProductByPopular(@Param("type") String type, Pageable pageable);
+
+
 }

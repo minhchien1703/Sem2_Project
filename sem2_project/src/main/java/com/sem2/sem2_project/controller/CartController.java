@@ -1,6 +1,7 @@
 package com.sem2.sem2_project.controller;
 
 import com.sem2.sem2_project.dto.request.CartRequest;
+import com.sem2.sem2_project.dto.response.CartResponse;
 import com.sem2.sem2_project.model.User;
 import com.sem2.sem2_project.repository.UserRepository;
 import com.sem2.sem2_project.repository.projection.CartProjection;
@@ -22,21 +23,27 @@ public class CartController {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
 
-    @PostMapping("/add")
-    public ResponseEntity<String> addToCart(@RequestParam int userId, @RequestBody CartRequest cartRequest) {
+    @PostMapping("/add/{userId}")
+    public ResponseEntity<String> addToCart(@PathVariable int userId, @RequestBody CartRequest cartRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(cartService.addToCart(cartRequest, user));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CartProjection>> getAllCart() {
+    public ResponseEntity<List<CartResponse>> getAllCart() {
         return ResponseEntity.ok(cartService.getAllCartsByUserId());
     }
 
     @DeleteMapping("/del")
     public ResponseEntity<String> delCart(@RequestParam(required = false) Integer id) {
         return ResponseEntity.ok(cartService.deleteProductFromCart(id));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateCart(@RequestBody CartRequest cartRequest) {
+        System.out.println(cartRequest.getProductId());
+        return ResponseEntity.ok(cartService.updateCartItemQuantity(cartRequest));
     }
 
 }

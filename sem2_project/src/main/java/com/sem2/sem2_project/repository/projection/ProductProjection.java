@@ -13,11 +13,4 @@ public interface ProductProjection {
     double getPrice();
     ProductStatus getStatus();
     int getSale();
-    List<ImageProjection> getImages();
-
-    interface ImageProjection {
-        int getId();
-        String getUrl();
-        String type();
-    }
 }

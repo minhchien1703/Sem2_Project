@@ -26,7 +26,7 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
             WHERE c.user.id = :userId
             AND c.status = :status
             """)
-    List<CartProjection> findCartByUserId(@Param("userId") int userId,
+    List<Cart> findCartByUserId(@Param("userId") int userId,
                                           @Param("status") CartStatus status);
 
     @Modifying
@@ -34,4 +34,6 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
             delete FROM Cart c WHERE c.product.id = :productId
             """)
     void deleteCartByProductId(@Param("productId") int productId);
+
+    List<Cart> findCartByUserId(int userId);
 }
