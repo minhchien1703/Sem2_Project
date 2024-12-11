@@ -44,5 +44,10 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductByPrice(request));
     }
 
+    @GetMapping("/single/{productId}")
+    public ResponseEntity<ProductResponse> singleProduct(@PathVariable("productId") int productId) {
+        return ResponseEntity.ok(productService.findById(productId));
+    }
+
 
 }

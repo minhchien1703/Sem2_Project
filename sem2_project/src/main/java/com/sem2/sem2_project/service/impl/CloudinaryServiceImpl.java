@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.sem2.sem2_project.model.Images;
 import com.sem2.sem2_project.model.Product;
 import com.sem2.sem2_project.repository.ImageRepository;
+import com.sem2.sem2_project.repository.ProductRepository;
 import com.sem2.sem2_project.service.CloudinaryService;
 import com.sem2.sem2_project.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class CloudinaryServiceImpl implements CloudinaryService {
     private final Cloudinary cloudinary;
     private final ImageRepository imageRepository;
-    private final ProductService productService;
+    private final ProductRepository productRepository;
 
     @Override
     public Map<String, String> uploadFile(MultipartFile file, int productId) throws IOException {
@@ -31,8 +32,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         String url = uploadResult.get("url").toString();
         String publicId = uploadResult.get("public_id").toString();
 
-        Product product = productService.findById(productId);
-
+        Product product = productRepository.findById(productId)
+                .orElseThrow(()-> new RuntimeException("Not found product with id: " + productId));
         Images image = new Images();
         image.setUrl(url);
         image.setPublicId(publicId);
@@ -47,11 +48,9 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     @Override
     public String deleteFile(String publicId) throws IOException {
         Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-
         if (result.get("result").toString().equals("ok")) {
             imageRepository.delImageByPublicId(publicId);
         }
-
         return result.get("result").toString();
     }
 

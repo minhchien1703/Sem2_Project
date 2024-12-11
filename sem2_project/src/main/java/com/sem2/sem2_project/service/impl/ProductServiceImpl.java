@@ -2,7 +2,10 @@ package com.sem2.sem2_project.service.impl;
 
 import com.sem2.sem2_project.dto.request.ProductPriceRequest;
 import com.sem2.sem2_project.dto.request.ProductRequest;
+import com.sem2.sem2_project.dto.response.ColorResponse;
+import com.sem2.sem2_project.dto.response.ImageResponse;
 import com.sem2.sem2_project.dto.response.ProductResponse;
+import com.sem2.sem2_project.dto.response.SizeResponse;
 import com.sem2.sem2_project.mappper.BasicMapper;
 import com.sem2.sem2_project.model.*;
 import com.sem2.sem2_project.model.Color;
@@ -13,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,9 +28,10 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final MaterialRepository materialRepository;
-    private final ColorRepository colorRepository;
     private final RoomRepository roomRepository;
     private final ImageRepository imageRepository;
+    private final SizeRepository sizeRepository;
+    private final ColorRepository colorRepository;
 
     @Override
     public String addProduct(ProductRequest productRequest) {
@@ -36,19 +41,33 @@ public class ProductServiceImpl implements ProductService {
         Material material = materialRepository.findById(productRequest.getMaterialId())
                 .orElseThrow(() -> new RuntimeException("Material not found"));
 
-        Color color = colorRepository.findById(productRequest.getColorId())
-                .orElseThrow(() -> new RuntimeException("Color not found"));
-
         Set<Room> rooms = productRequest.getRoomsIds().stream()
                 .map(id -> roomRepository.findById(id)
                         .orElseThrow(() -> new RuntimeException("Room not found with id: " + id)))
                 .collect(Collectors.toSet());
 
+        Size size = sizeRepository.findByName(productRequest.getSize());
+        if (size == null) {
+            size = new Size();
+            size.setName(productRequest.getSize());
+            sizeRepository.save(size);
+        }
+
+        Color color = colorRepository.findByName(productRequest.getColor());
+        if (color == null) {
+            color = new Color();
+            color.setName(productRequest.getColor());
+            color.setHexCode(productRequest.getColor());
+            colorRepository.save(color);
+        }
+
+
         Product product = BasicMapper.INSTANCE.toProduct(productRequest);
+        product.setColor(color);
+        product.setSize(size);
         product.setRating(5);
         product.setCategory(category);
         product.setMaterial(material);
-        product.setColor(color);
         product.setStatus(ProductStatus.AVAILABLE);
         product.setRooms(rooms);
         productRepository.save(product);
@@ -67,6 +86,8 @@ public class ProductServiceImpl implements ProductService {
                     productResponse.setImage(image.getUrl());
                 }
             }
+            productResponse.setColors(BasicMapper.INSTANCE.toColorResponse(colorRepository.findById(productResponse.getColors().getId())));
+            productResponse.setSizes(BasicMapper.INSTANCE.toSizeResponse(sizeRepository.findById(productResponse.getSizes().getId())));
         }
         return productResponses;
     }
@@ -76,19 +97,25 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
 
+        Category category = categoryRepository.findById(productRequest.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        Material material = materialRepository.findById(productRequest.getMaterialId())
+                .orElseThrow(() -> new RuntimeException("Material not found"));
+
         Set<Room> rooms = productRequest.getRoomsIds().stream()
                 .map(roomId -> roomRepository.findById(roomId)
                         .orElseThrow(() -> new RuntimeException("Room not found id: " + roomId)))
                 .collect(Collectors.toSet());
 
-        product.setName(productRequest.getName());
         product.setDescription(productRequest.getDescription());
-        product.setPrice(productRequest.getPrice());
-        product.setQuantity(productRequest.getQuantity());
-        product.setWeight(productRequest.getWeight());
-        product.setSize(productRequest.getSize());
-        product.setSale(productRequest.getSale());
         product.setStatus(productRequest.getStatus());
+        product.setSale(productRequest.getSale());
+        product.setPrice(productRequest.getPrice());
+        product.setWeight(productRequest.getWeight());
+        product.setQuantity(productRequest.getQuantity());
+        product.setMaterial(material);
+        product.setCategory(category);
         product.setRooms(rooms);
         productRepository.save(product);
         return "Product updated successfully";
@@ -104,8 +131,15 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse findById(int id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-
-
+        ProductResponse productResponse = BasicMapper.INSTANCE.toProductResponse(product);
+        List<Images> images = imageRepository.findImagesByProductId(id);
+        productResponse.setImages(BasicMapper.INSTANCE.toImageResponseList(images));
+        for (Images image : images) {
+            if (image.getType() != null && image.getType().equals("AVATAR")) {
+                productResponse.setImage(image.getUrl());
+            }
+        }
+        return productResponse;
     }
 
 

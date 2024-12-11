@@ -18,5 +18,4 @@ public interface ProductService {
 
     ProductResponse findById(int id);
 
-
 }

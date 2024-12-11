@@ -17,9 +17,10 @@ public class ProductRequest {
     private int quantity;
     private double weight;
     private int materialId;
-    private int colorId;
-    private String size;
     private ProductStatus status;
     private int sale;
+    private String size;
+    private String color;
+    private String hexCode;
     private List<Integer> roomsIds;
 }

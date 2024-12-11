@@ -10,12 +10,10 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@Table(name = "color")
-public class Color {
+@Table(name = "sizes")
+public class Size {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    @Column(name = "hex_code")
-    private String hexCode;
 }

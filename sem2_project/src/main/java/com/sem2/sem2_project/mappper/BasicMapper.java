@@ -3,11 +3,11 @@ package com.sem2.sem2_project.mappper;
 import com.sem2.sem2_project.dto.request.*;
 import com.sem2.sem2_project.dto.response.*;
 import com.sem2.sem2_project.model.*;
-import com.sem2.sem2_project.repository.projection.CartProjection;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Mapper
@@ -27,7 +27,7 @@ public interface BasicMapper {
     //    image
     Images toImageRequest(ImageRequest request);
 
-    ImageResponse toImage(Images images);
+    List<ImageResponse> toImageResponseList(List<Images> images);
 
     //    orders
     Order orderRequestToOrder(OrderRequest request);
@@ -38,5 +38,9 @@ public interface BasicMapper {
     List<ProductResponse> toProductResponseList(List<Product> productList);
 
     Product toProduct(ProductRequest productRequest);
+//Size
+    SizeResponse toSizeResponse(Optional<Size> size);
+//    color
 
+    ColorResponse toColorResponse(Optional<Color> byId);
 }

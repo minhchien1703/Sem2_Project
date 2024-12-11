@@ -2,6 +2,7 @@ package com.sem2.sem2_project.service.impl;
 
 import com.sem2.sem2_project.dto.request.CartRequest;
 import com.sem2.sem2_project.dto.response.CartResponse;
+import com.sem2.sem2_project.dto.response.ColorResponse;
 import com.sem2.sem2_project.dto.response.ProductResponse;
 import com.sem2.sem2_project.mappper.BasicMapper;
 import com.sem2.sem2_project.model.*;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,19 +42,18 @@ public class CartServiceImpl implements CartService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-
         Cart cart = cartRepository.findCartByProductIdAndUserId(product.getId(), user.getId());
         if (cart != null) {
             log.info("The product is already in the cart!");
             return "The product is already in the cart!";
-        }else {
+        } else {
             cart = new Cart();
             cart.setUser(user);
             cart.setProduct(product);
             cart.setStatus(CartStatus.ACTIVE);
             if (request.getQuantity() > 0) {
                 cart.setQuantity(request.getQuantity());
-            }else {
+            } else {
                 cart.setQuantity(1);
             }
             cart.setSubTotal(product.getPrice() * cart.getQuantity());
@@ -73,10 +75,6 @@ public class CartServiceImpl implements CartService {
                 ProductResponse productRes = BasicMapper.INSTANCE.toProductResponse(product.get());
                 productRes.setStatus(product.get().getStatus());
 
-                Optional<Color> color = colorRepository.findById(product.get().getColor().getId());
-                if (color.isPresent()) {
-                    productRes.setColor(color.get());
-                }
 
                 List<Images> images = imageRepository.findImagesByProductId(product.get().getId());
                 for (Images image : images) {
@@ -103,7 +101,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public String updateCartItemQuantity(CartRequest cartRequest) {
         User user = authenticationService.getCurrenAuthenticatedUser();
-        Cart cart = cartRepository.findCartByProductIdAndUserId(cartRequest.getProductId(), user.getId()    );
+        Cart cart = cartRepository.findCartByProductIdAndUserId(cartRequest.getProductId(), user.getId());
         cart.setQuantity(cartRequest.getQuantity());
         cartRepository.save(cart);
         return "Cart successfully updated";

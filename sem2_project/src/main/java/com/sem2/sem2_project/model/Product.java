@@ -27,18 +27,20 @@ public class Product {
     @Column(name = "stock_quantity")
     private int quantity;
     private double weight;
-    @ManyToOne
-    @JoinColumn(name = "material_id")
-    private Material material;
-    @ManyToOne
-    @JoinColumn(name = "color_id")
-    private Color color;
-    private String size;
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
     private double rating;
     private int sale;
     private String type;
+    @ManyToOne
+    @JoinColumn(name = "size_id")
+    private Size size;
+    @ManyToOne
+    @JoinColumn(name = "color_id")
+    private Color color;
+    @ManyToOne
+    @JoinColumn(name = "material_id")
+    private Material material;
     @ManyToMany
     @JoinTable(
             name = "product_room",

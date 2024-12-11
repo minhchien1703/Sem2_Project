@@ -20,6 +20,9 @@ public class ProductResponse {
     private String description;
     private ProductStatus status;
     private int sale;
+    private int quantity;
     private String image;
-    private Color color;
+    private SizeResponse sizes;
+    private ColorResponse colors;
+    private List<ImageResponse> images;
 }
