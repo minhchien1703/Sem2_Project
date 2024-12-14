@@ -1,5 +1,6 @@
 package com.sem2.sem2_project.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sem2.sem2_project.model.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -41,6 +42,9 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "material_id")
     private Material material;
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Images> images = new ArrayList<>();
     @ManyToMany
     @JoinTable(
             name = "product_room",

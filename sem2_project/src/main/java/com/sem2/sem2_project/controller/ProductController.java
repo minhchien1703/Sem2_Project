@@ -3,16 +3,17 @@ package com.sem2.sem2_project.controller;
 import com.sem2.sem2_project.dto.request.ProductPriceRequest;
 import com.sem2.sem2_project.dto.request.ProductRequest;
 import com.sem2.sem2_project.dto.response.ProductResponse;
-import com.sem2.sem2_project.model.Product;
 import com.sem2.sem2_project.model.enums.TypeProducts;
-import com.sem2.sem2_project.repository.projection.ProductProjection;
+import com.sem2.sem2_project.service.CloudinaryService;
 import com.sem2.sem2_project.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,11 +23,27 @@ import java.util.List;
 @Slf4j
 public class ProductController {
     private final ProductService productService;
+    private final CloudinaryService cloudinaryService;
 
-    @PostMapping("/add")
-    public String addProduct(@RequestBody ProductRequest productRequest) {
-//        log.info("Add category: {}", productRequest.getCategoryId());
-        return productService.addProduct(productRequest);
+    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductResponse> addProduct(@RequestPart("jsonData") ProductRequest productRequest,
+                                                      @RequestPart("files") List<MultipartFile> files) {
+        try{
+            productRequest.setImages(cloudinaryService.uploadFiles(files));}
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return ResponseEntity.ok(productService.addProduct(productRequest));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductResponse>> getProducts() {
+        return ResponseEntity.ok(productService.getProducts());
+    }
+
+    @PostMapping(value = "/add")
+    public ResponseEntity<ProductResponse> addProduct(@RequestBody ProductRequest productRequest) {
+        return ResponseEntity.ok(productService.addProduct(productRequest));
     }
 
     @GetMapping("/popular")
@@ -44,9 +61,30 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductByPrice(request));
     }
 
-    @GetMapping("/single/{productId}")
-    public ResponseEntity<ProductResponse> singleProduct(@PathVariable("productId") int productId) {
-        return ResponseEntity.ok(productService.findById(productId));
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable int id) {
+        return ResponseEntity.ok(productService.getProductById(id));
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ProductResponse>> getProductsByCategory(@PathVariable int categoryId) {
+        return ResponseEntity.ok(productService.getProductByCategory(categoryId));
+    }
+
+    @GetMapping("/room/{roomId}")
+    public ResponseEntity<List<ProductResponse>> getProductsByRoomId(@PathVariable int roomId) {
+        return ResponseEntity.ok(productService.getProductByRoomId(roomId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable int id, @RequestBody ProductRequest productRequest) {
+        return ResponseEntity.ok(productService.updateProduct(id, productRequest));
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteProduct(@PathVariable int id) {
+        productService.deleteProduct(id);
+        return "Product deleted";
     }
 
 

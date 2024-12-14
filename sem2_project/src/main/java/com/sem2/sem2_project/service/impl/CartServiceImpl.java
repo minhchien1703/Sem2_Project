@@ -76,12 +76,12 @@ public class CartServiceImpl implements CartService {
                 productRes.setStatus(product.get().getStatus());
 
 
-                List<Images> images = imageRepository.findImagesByProductId(product.get().getId());
-                for (Images image : images) {
-                    if (image.getType() != null && image.getType().equals("AVATAR")) {
-                        productRes.setImage(image.getUrl());
-                    }
-                }
+//                List<Images> images = imageRepository.findImagesByProductId(product.get().getId());
+//                for (Images image : images) {
+//                    if (image.getType() != null && image.getType().equals("AVATAR")) {
+//                        productRes.setImage(image);
+//                    }
+//                }
 
                 cartRes.setQuantity(cart.getQuantity());
                 cartRes.setProduct(productRes);

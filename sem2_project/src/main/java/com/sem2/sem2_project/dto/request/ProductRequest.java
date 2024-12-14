@@ -4,9 +4,9 @@ import com.sem2.sem2_project.model.*;
 import com.sem2.sem2_project.model.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class ProductRequest {
@@ -16,11 +16,11 @@ public class ProductRequest {
     private double price;
     private int quantity;
     private double weight;
-    private int materialId;
     private ProductStatus status;
-    private int sale;
-    private String size;
-    private String color;
-    private String hexCode;
+    private String type;
+    private int sizeId;
+    private int colorId;
+    private int materialId;
+    private List<Images> images;
     private List<Integer> roomsIds;
 }

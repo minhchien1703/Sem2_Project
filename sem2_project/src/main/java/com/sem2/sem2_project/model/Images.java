@@ -1,5 +1,6 @@
 package com.sem2.sem2_project.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class Images {
     private String type;
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
     @Column(name = "public_id")
     private String publicId;

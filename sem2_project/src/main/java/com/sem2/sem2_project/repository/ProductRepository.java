@@ -1,8 +1,7 @@
 package com.sem2.sem2_project.repository;
 
-import com.sem2.sem2_project.dto.response.ProductResponse;
+import com.sem2.sem2_project.model.Category;
 import com.sem2.sem2_project.model.Product;
-import com.sem2.sem2_project.repository.projection.ProductProjection;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +16,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query(value = "select p.*, i.url from products p join images i on p.id = i.product_id order by p.id desc ", nativeQuery = true)
     List<Product> getLimitedProducts();
 
+    List<Product> findTop5ByOrderByIdDesc();
+
     @Query("""
             SELECT p FROM Product p WHERE p.price BETWEEN :firstPrice AND :lastPrice
             """)
@@ -29,5 +30,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             """)
     List<Product> findProductByPopular(@Param("type") String type, Pageable pageable);
 
+    List<Product> getProductsByCategory(Category category);
 
+    @Query("SELECT p FROM Product p JOIN p.rooms r WHERE r.id = :roomId")
+    List<Product> getProductsByRoomId(@Param("roomId") int roomId);
 }

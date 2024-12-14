@@ -8,14 +8,23 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ProductService {
-    String addProduct(ProductRequest product);
+    ProductResponse addProduct(ProductRequest product);
 
     List<ProductResponse> getProductByTypePopular(String type, Pageable pageable);
 
-    String updateProduct(int id, ProductRequest product);
+    ProductResponse getProductById(int id);
+
+    ProductResponse updateProduct(int id, ProductRequest product);
+
+    void deleteProduct(int id);
 
     List<ProductResponse> getProductByPrice(ProductPriceRequest productPriceRequest);
 
     ProductResponse findById(int id);
 
+    List<ProductResponse> getProductByCategory(int categoryId);
+
+    List<ProductResponse> getProductByRoomId(int roomId);
+
+    List<ProductResponse> getProducts();
 }

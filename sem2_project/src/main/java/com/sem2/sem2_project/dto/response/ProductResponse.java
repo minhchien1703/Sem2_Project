@@ -1,13 +1,10 @@
 package com.sem2.sem2_project.dto.response;
 
 import com.sem2.sem2_project.model.*;
-import com.sem2.sem2_project.model.Color;
 import com.sem2.sem2_project.model.enums.ProductStatus;
-import com.sem2.sem2_project.repository.projection.ImageProjection;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Set;
 
@@ -15,14 +12,21 @@ import java.util.Set;
 public class ProductResponse {
     private int id;
     private String name;
-    private double price;
-    private double rating;
     private String description;
-    private ProductStatus status;
-    private int sale;
+    private Category category;
+    private double price;
     private int quantity;
-    private String image;
-    private SizeResponse sizes;
-    private ColorResponse colors;
-    private List<ImageResponse> images;
+    private double weight;
+    private ProductStatus status;
+    private double rating;
+    private int sale;
+    private String type;
+    private Size size;
+    private Color color;
+    private Material material;
+    private List<Images> images;
+    private Set<Room> rooms;
+
+
+
 }

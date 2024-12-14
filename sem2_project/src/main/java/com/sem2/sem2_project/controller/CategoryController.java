@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/category")
 @RequiredArgsConstructor
@@ -23,6 +25,9 @@ public class CategoryController {
         return categoryService.deleteCategory(id);
     }
 
-
+    @GetMapping
+    public ResponseEntity<List<CategoryResponse>> getAllCategory(){
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
 
 }

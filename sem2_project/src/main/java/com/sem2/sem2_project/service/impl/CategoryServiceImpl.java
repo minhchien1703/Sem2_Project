@@ -8,6 +8,8 @@ import com.sem2.sem2_project.repository.CategoryRepository;
 import com.sem2.sem2_project.service.CategoryService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
@@ -29,6 +31,12 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
         categoryRepository.delete(category);
         return "Category deleted";
+    }
+
+    @Override
+    public List<CategoryResponse> getAllCategories() {
+        List<Category> Categories = categoryRepository.findAll();
+        return BasicMapper.INSTANCE.toCategoryResponseList(Categories);
     }
 
 

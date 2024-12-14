@@ -17,12 +17,12 @@ import java.util.Map;
 public class UploadController {
     private final CloudinaryService cloudinaryService;
 
-    @PostMapping("/upload/{productId}")
-    public ResponseEntity<List<Map<String, String>>> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @PathVariable int productId) {
+    @PostMapping("/upload")
+    public ResponseEntity<List<Map<String, String>>> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
         List<Map<String, String>> uploadResults = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
-                Map<String, String> result = cloudinaryService.uploadFile(file, productId);
+                Map<String, String> result = cloudinaryService.uploadFile(file);
                 uploadResults.add(result);
             } catch (IOException e) {
                 return ResponseEntity.status(500).body(null);
@@ -40,6 +40,7 @@ public class UploadController {
             return ResponseEntity.status(500).body("Error deleting file");
         }
     }
+
 
 
 }

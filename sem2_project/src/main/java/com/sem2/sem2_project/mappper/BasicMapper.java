@@ -43,4 +43,6 @@ public interface BasicMapper {
 //    color
 
     ColorResponse toColorResponse(Optional<Color> byId);
+
+    List<CategoryResponse> toCategoryResponseList(List<Category> categories);
 }
