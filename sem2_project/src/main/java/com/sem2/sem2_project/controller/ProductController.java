@@ -90,5 +90,14 @@ public class ProductController {
         return "Product deleted";
     }
 
+    @GetMapping("/related/{categoryId}")
+    public ResponseEntity<List<ProductResponse>> getRelatedProducts(@PathVariable("categoryId") Integer categoryId) {
+        return ResponseEntity.ok(productService.getProductByRelated(categoryId));
+    }
+
+    @GetMapping("/page/{page}")
+    public ResponseEntity<List<ProductResponse>> getProductsByPage(@PathVariable("page") int page) {
+        return ResponseEntity.ok(productService.getProductPages(page));
+    }
 
 }

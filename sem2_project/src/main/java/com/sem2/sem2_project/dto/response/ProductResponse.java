@@ -26,7 +26,4 @@ public class ProductResponse {
     private Material material;
     private List<Images> images;
     private Set<Room> rooms;
-
-
-
 }
