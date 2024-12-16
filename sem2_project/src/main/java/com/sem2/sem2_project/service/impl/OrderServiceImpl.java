@@ -1,17 +1,17 @@
 package com.sem2.sem2_project.service.impl;
 
-import com.sem2.sem2_project.dto.request.ProductOrderRequest;
 import com.sem2.sem2_project.dto.request.OrderUpdateStatusRequest;
 import com.sem2.sem2_project.dto.request.OrderRequest;
 import com.sem2.sem2_project.dto.response.OrderDetailsResponse;
 import com.sem2.sem2_project.dto.response.OrderResponse;
 import com.sem2.sem2_project.mappper.BasicMapper;
 import com.sem2.sem2_project.model.*;
+import com.sem2.sem2_project.model.enums.CartStatus;
 import com.sem2.sem2_project.repository.*;
+import com.sem2.sem2_project.repository.projection.PaymentProjection;
+import com.sem2.sem2_project.repository.projection.UserProjection;
 import com.sem2.sem2_project.service.AuthenticationService;
 import com.sem2.sem2_project.service.OrderService;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,35 +31,37 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentRepository paymentRepository;
     private final AuthenticationService authenticationService;
     private final CartRepository cartRepository;
-    private final CartServiceImpl cartServiceImpl;
+    private final UserRepository userRepository;
+    private final CartSummaryRepository cartSummaryRepository;
 
     @Override
     public String createOrder(OrderRequest orderRequest) {
         User user = authenticationService.getCurrenAuthenticatedUser();
-        Status status = statusRepository.findById(orderRequest.getStatusId())
+        Status status = statusRepository.findById(1)
                 .orElseThrow(() -> new RuntimeException("Status not found"));
         Payment payment = paymentRepository.findById(orderRequest.getPaymentMethodId())
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-        Order order = BasicMapper.INSTANCE.orderRequestToOrder(orderRequest);
+        Order order = new Order();
+        order.setMessage(orderRequest.getMessage());
+        order.setShippingAddress(orderRequest.getShippingAddress());
         order.setPayment(payment);
         order.setUser(user);
         order.setStatus(status);
+        CartSummary cartSummary = cartSummaryRepository.findCartSummaryByUser(user.getId());
+        order.setTotalAmount(cartSummary.getTotal());
         order = orderRepository.save(order);
 
-        double totalAmount = 0;
-        List<Integer> productIds = orderRequest.getProductIds();
-        for (Integer productId : productIds) {
-            Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+        List<Cart> carts = cartRepository.findCartByUserId(user.getId(), CartStatus.ACTIVE);
+        for (Cart item : carts) {
+           Product product = productRepository.findById(item.getProduct().getId())
+                   .orElseThrow(() -> new RuntimeException("Product not found"));
             Cart cart = cartRepository.findCartByProductIdAndUserId(product.getId(), user.getId());
             double productTotal = product.getPrice() * cart.getQuantity();
-            totalAmount += productTotal;
             OrderDetails orderDetails = new OrderDetails(order, product, cart.getQuantity(), productTotal);
             orderDetailsRepository.save(orderDetails);
             cartRepository.delete(cart);
         }
-        order.setTotalAmount(totalAmount);
-        orderRepository.save(order);
         return "Create order successful";
     }
 
@@ -125,6 +126,17 @@ public class OrderServiceImpl implements OrderService {
             orderResponses.add(orderResponse);
         }
         return orderResponses;
+    }
+
+    @Override
+    public UserProjection getInfoUser() {
+        User user = authenticationService.getCurrenAuthenticatedUser();
+        return userRepository.findUserProjectionById(user.getId());
+    }
+
+    @Override
+    public List<PaymentProjection> getInfoPayments() {
+        return paymentRepository.findAllPayments();
     }
 
 }

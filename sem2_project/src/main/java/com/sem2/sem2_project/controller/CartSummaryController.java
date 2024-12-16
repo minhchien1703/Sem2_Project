@@ -14,7 +14,7 @@ public class CartSummaryController {
     private final CartSummaryService cartSummaryService;
 
     @PutMapping("/update")
-    public ResponseEntity<String> displayCartSummary() {
+    public ResponseEntity<String> updateCartSummary() {
         return ResponseEntity.ok(cartSummaryService.updateCartSummary());
     }
 

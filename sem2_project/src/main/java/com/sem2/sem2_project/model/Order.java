@@ -33,4 +33,6 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "status_id")
     private Status status;
+    @Column(name = "message")
+    private String message;
 }

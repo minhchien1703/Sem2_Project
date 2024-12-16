@@ -39,9 +39,10 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public String addToCart(CartRequest request, User user) {
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
+        Product product = productRepository.findByProductIdColorIdSizeId(request.getProductId(), request.getColorId(), request.getSizeId());
+        if (product == null) {
+            throw new RuntimeException( "Product is out of store!");
+        }
         Cart cart = cartRepository.findCartByProductIdAndUserId(product.getId(), user.getId());
         if (cart != null) {
             log.info("The product is already in the cart!");
@@ -75,14 +76,11 @@ public class CartServiceImpl implements CartService {
                 ProductResponse productRes = BasicMapper.INSTANCE.toProductResponse(product.get());
                 productRes.setStatus(product.get().getStatus());
 
-
-                List<Images> images = imageRepository.findImagesByProductId(product.get().getId());
-                for (Images image : images) {
-                    if (image.getType() != null && image.getType().equals("AVATAR")) {
-                        productRes.setImage(image.getUrl());
-                    }
+                Images image = imageRepository.findImagesByProductId(product.get().getId());
+                if (image != null) {
+                    productRes.setImage(image.getUrl());
                 }
-
+                cartRes.setId(cart.getId());
                 cartRes.setQuantity(cart.getQuantity());
                 cartRes.setProduct(productRes);
                 cartResponses.add(cartRes);
@@ -93,8 +91,8 @@ public class CartServiceImpl implements CartService {
 
     @Transactional
     @Override
-    public String deleteProductFromCart(int cartId) {
-        cartRepository.deleteById(cartId);
+    public String deleteProductFromCart(int productId) {
+        cartRepository.deleteCartByProductId(productId);
         return "Delete cart successfully";
     }
 

@@ -18,8 +18,14 @@ public interface ImageRepository extends JpaRepository<Images, Integer> {
     @Query("""
                     SELECT
                     i
+                    FROM Images i WHERE i.product.id = :productId and i.type = "AVATAR"
+            """)
+    Images findImagesByProductId(@Param("productId") int productId);
+
+    @Query("""
+                    SELECT
+                    i
                     FROM Images i WHERE i.product.id = :productId
             """)
-    List<Images> findImagesByProductId(@Param("productId") int productId);
-
+    List<Images> findImagesByProductIds(@Param("productId") int productId);
 }

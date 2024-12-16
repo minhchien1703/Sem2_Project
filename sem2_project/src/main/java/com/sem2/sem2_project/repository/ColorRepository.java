@@ -12,4 +12,9 @@ import java.util.Set;
 @Repository
 public interface ColorRepository extends JpaRepository<Color, Integer> {
     Color findByName(String name);
+
+    @Query("""
+                select c from Color c where c.id = :id
+            """)
+    List<Color> findByColorId(@Param("id") Integer id);
 }

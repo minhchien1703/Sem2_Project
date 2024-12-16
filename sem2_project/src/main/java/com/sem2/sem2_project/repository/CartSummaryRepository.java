@@ -17,5 +17,5 @@ public interface CartSummaryRepository extends JpaRepository<CartSummary, Intege
     Optional<CartSummaryProjection> findCartSummaryByUserId(@Param("userId") int userId);
 
     @Query("SELECT cs FROM CartSummary cs WHERE cs.user.id = :userId")
-    CartSummary findCartSummaryByUser(@Param("userId") int userId);
+    CartSummary findCartSummaryByUser(@Param("userId") Integer userId);
 }

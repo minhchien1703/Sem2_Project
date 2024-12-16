@@ -13,9 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderRequest {
-    double totalAmount;
     String shippingAddress;
     int paymentMethodId;
-    int statusId;
-    List<Integer> productIds;
+    String message;
 }
