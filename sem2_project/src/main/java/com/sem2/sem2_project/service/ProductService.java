@@ -2,7 +2,7 @@ package com.sem2.sem2_project.service;
 
 import com.sem2.sem2_project.dto.request.ProductPriceRequest;
 import com.sem2.sem2_project.dto.request.ProductRequest;
-import com.sem2.sem2_project.dto.response.ProductResponse;
+import com.sem2.sem2_project.dto.response.*;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -27,4 +27,13 @@ public interface ProductService {
     List<ProductResponse> getProductByRoomId(int roomId);
 
     List<ProductResponse> getProducts();
+
+    List<SizeResponse> getSizes();
+
+    List<CategoryResponse> getCategories();
+
+    List<ColorResponse> getColors();
+
+    List<MaterialResponse> getMaterials();
+
 }

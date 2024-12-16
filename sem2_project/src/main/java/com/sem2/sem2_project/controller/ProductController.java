@@ -5,6 +5,7 @@ import com.sem2.sem2_project.dto.request.ProductRequest;
 import com.sem2.sem2_project.dto.response.ProductResponse;
 import com.sem2.sem2_project.model.enums.TypeProducts;
 import com.sem2.sem2_project.service.CloudinaryService;
+import com.sem2.sem2_project.service.EmailService;
 import com.sem2.sem2_project.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     private final CloudinaryService cloudinaryService;
+    private final EmailService emailService;
 
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductResponse> addProduct(@RequestPart("jsonData") ProductRequest productRequest,
@@ -38,6 +40,7 @@ public class ProductController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ProductResponse>> getProducts() {
+        emailService.sendOrderConfirmation("sonnt0212@gmail.com","testing");
         return ResponseEntity.ok(productService.getProducts());
     }
 

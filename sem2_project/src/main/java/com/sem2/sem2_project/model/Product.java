@@ -51,4 +51,6 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "room_id"))
     private Set<Room> rooms = new HashSet<>();
+    @Column(name ="iscontinue")
+    private boolean isContinue;
 }

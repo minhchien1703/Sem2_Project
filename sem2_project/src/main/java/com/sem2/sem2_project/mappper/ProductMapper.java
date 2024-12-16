@@ -78,12 +78,12 @@ public abstract class ProductMapper {
 
     @Named("mapCategory")
     Category mapCategory(int categoryId) {
-        return categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
+        return categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found with id"+categoryId));
     }
 
     @Named("mapSize")
     Size mapSize(int sizeId) {
-        return sizeRepository.findById(sizeId).orElseThrow(() -> new RuntimeException("Size not found"));
+        return sizeRepository.findById(sizeId).orElseThrow(() -> new RuntimeException("Size not found "));
     }
 
     @Named("mapColor")

@@ -24,6 +24,17 @@ public interface BasicMapper {
 
     Category mapToCategory(CategoryRequest categoryRequest);
 
+    SizeResponse mapToSizeResponse(Size size);
+
+    Size mapToSize(SizeRequest sizeRequest);
+
+    ColorResponse mapToColorResponse(Color color);
+
+    Color mapToColor(ColorRequest colorRequest);
+
+    MaterialResponse mapToMaterialResponse(Material material);
+
+    Material mapToMaterial(Material materialRequest);
     //    image
     Images toImageRequest(ImageRequest request);
 
@@ -45,4 +56,10 @@ public interface BasicMapper {
     ColorResponse toColorResponse(Optional<Color> byId);
 
     List<CategoryResponse> toCategoryResponseList(List<Category> categories);
+
+    List<SizeResponse> toSizeResponseList(List<Size> sizes);
+
+    List<ColorResponse> toColorResponseList(List<Color> colors);
+
+    List<MaterialResponse> toMaterialResponseList(List<Material> materials);
 }

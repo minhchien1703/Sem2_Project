@@ -2,7 +2,7 @@ package com.sem2.sem2_project.service.impl;
 
 import com.sem2.sem2_project.dto.request.ProductPriceRequest;
 import com.sem2.sem2_project.dto.request.ProductRequest;
-import com.sem2.sem2_project.dto.response.ProductResponse;
+import com.sem2.sem2_project.dto.response.*;
 import com.sem2.sem2_project.mappper.BasicMapper;
 import com.sem2.sem2_project.mappper.ProductMapper;
 import com.sem2.sem2_project.model.*;
@@ -118,6 +118,30 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponse> getProducts() {
         List<Product> products = productRepository.findAll();
         return ProductMapper.getInstance().toProductResponseList(products);
+    }
+
+    @Override
+    public List<SizeResponse> getSizes() {
+        List<Size> sizes = sizeRepository.findAll();
+        return BasicMapper.INSTANCE.toSizeResponseList(sizes);
+    }
+
+    @Override
+    public List<CategoryResponse> getCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return BasicMapper.INSTANCE.toCategoryResponseList(categories);
+    }
+
+    @Override
+    public List<ColorResponse> getColors() {
+        List<Color> colors = colorRepository.findAll();
+        return BasicMapper.INSTANCE.toColorResponseList(colors);
+    }
+
+    @Override
+    public List<MaterialResponse> getMaterials() {
+        List<Material> materials = materialRepository.findAll();
+        return BasicMapper.INSTANCE.toMaterialResponseList(materials);
     }
 
 
