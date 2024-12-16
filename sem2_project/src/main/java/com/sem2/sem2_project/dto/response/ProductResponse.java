@@ -18,11 +18,12 @@ public class ProductResponse {
     private double price;
     private double rating;
     private String description;
-    private ProductStatus status;
     private int sale;
     private int quantity;
     private String image;
-    private SizeResponse sizes;
-    private ColorResponse colors;
+    private ProductStatus status;
+    private CategoryResponse categories;
+    private List<Size> sizes;
+    private List<Color> colors;
     private List<ImageResponse> images;
 }

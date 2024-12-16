@@ -18,4 +18,8 @@ public interface ProductService {
 
     ProductResponse findById(int id);
 
+    List<ProductResponse> getProductByRelated(int category);
+
+    List<ProductResponse> getProductPages(int limit);
+
 }

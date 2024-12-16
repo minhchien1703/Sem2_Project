@@ -3,9 +3,7 @@ package com.sem2.sem2_project.controller;
 import com.sem2.sem2_project.dto.request.ProductPriceRequest;
 import com.sem2.sem2_project.dto.request.ProductRequest;
 import com.sem2.sem2_project.dto.response.ProductResponse;
-import com.sem2.sem2_project.model.Product;
 import com.sem2.sem2_project.model.enums.TypeProducts;
-import com.sem2.sem2_project.repository.projection.ProductProjection;
 import com.sem2.sem2_project.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,5 +47,14 @@ public class ProductController {
         return ResponseEntity.ok(productService.findById(productId));
     }
 
+    @GetMapping("/related/{categoryId}")
+    public ResponseEntity<List<ProductResponse>> getRelatedProducts(@PathVariable("categoryId") Integer categoryId) {
+        return ResponseEntity.ok(productService.getProductByRelated(categoryId));
+    }
+
+    @GetMapping("/page/{page}")
+    public ResponseEntity<List<ProductResponse>> getProductsByPage(@PathVariable("page") int page) {
+        return ResponseEntity.ok(productService.getProductPages(page));
+    }
 
 }

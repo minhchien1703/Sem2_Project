@@ -37,10 +37,4 @@ public interface BasicMapper {
     //    product
     List<ProductResponse> toProductResponseList(List<Product> productList);
 
-    Product toProduct(ProductRequest productRequest);
-//Size
-    SizeResponse toSizeResponse(Optional<Size> size);
-//    color
-
-    ColorResponse toColorResponse(Optional<Color> byId);
 }
