@@ -4,7 +4,6 @@ import com.sem2.sem2_project.model.*;
 import com.sem2.sem2_project.model.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

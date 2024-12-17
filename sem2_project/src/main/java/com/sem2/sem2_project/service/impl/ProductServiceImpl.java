@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.List;
 
 
 @Service
@@ -54,11 +53,6 @@ public class ProductServiceImpl implements ProductService {
         }
         return productResponses;
     }
-
-//    @Override
-//    public List<Product> getProductForHome() {
-//        return productRepository.findTop5ByOrderByIdDesc();
-//    }
 
     @Override
     public ProductResponse getProductById(int id) {
@@ -142,6 +136,36 @@ public class ProductServiceImpl implements ProductService {
     public List<MaterialResponse> getMaterials() {
         List<Material> materials = materialRepository.findAll();
         return BasicMapper.INSTANCE.toMaterialResponseList(materials);
+    }
+
+    @Override
+    public List<ProductResponse> getProductByRelated(int category) {
+        List<Product> productList = productRepository.getProductsByCategory(category);
+        List<ProductResponse> productResponses = BasicMapper.INSTANCE.toProductResponseList(productList);
+
+        for (ProductResponse product : productResponses) {
+            Images image = imageRepository.findImagesByProductId(product.getId());
+            if (image != null) {
+                product.setImage(image.getUrl());
+            }
+        }
+        return productResponses;
+    }
+
+    @Override
+    public List<ProductResponse> getProductPages(int page) {
+        int limit = 5;
+        int offset = page * limit;
+        List<Product> products = productRepository.getProductListProjection(limit, offset);
+        List<ProductResponse> productResponses = BasicMapper.INSTANCE.toProductResponseList(products);
+
+        for (ProductResponse product : productResponses) {
+            Images image = imageRepository.findImagesByProductId(product.getId());
+            if (image != null) {
+                product.setImage(image.getUrl());
+            }
+        }
+        return productResponses;
     }
 
 
