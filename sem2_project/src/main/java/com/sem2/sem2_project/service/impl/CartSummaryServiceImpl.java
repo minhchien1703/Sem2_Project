@@ -29,7 +29,13 @@ public class CartSummaryServiceImpl implements CartSummaryService {
         List<Cart> carts = cartRepository.findCartByUserId(user.getId());
 
         if (carts.isEmpty()) {
-            return "No items in the cart to update summary.";
+            CartSummary cartSummary = cartSummaryRepository.findCartSummaryByUser(user.getId());
+            cartSummary.setDiscount(0);
+            cartSummary.setSubtotal(0);
+            cartSummary.setTotal(0);
+            cartSummary.setTax(0);
+            cartSummaryRepository.save(cartSummary);
+            return "!";
         }
 
         // Tính toán Subtotal
@@ -46,30 +52,30 @@ public class CartSummaryServiceImpl implements CartSummaryService {
                 })
                 .sum();
 
-        // Tính toán Thuế (Giả sử thuế là 10%)
         double taxRate = 0.05;
         double tax = subtotal * taxRate;
-
-        // Tính toán Tổng cộng (Total)
         double total = subtotal + tax - discount;
 
-        // Lưu thông tin CartSummary vào cơ sở dữ liệu
-        CartSummary cartSummary = cartSummaryRepository.findCartSummaryByUser(user.getId());
-        if (cartSummary == null) {
-            cartSummary = new CartSummary();
-            cartSummary.setUser(user);
-            cartSummary.setSubtotal(subtotal);
-            cartSummary.setDiscount(discount);
-            cartSummary.setTax(tax);
-            cartSummary.setTotal(total);
-        } else {
-            cartSummary.setSubtotal(subtotal);
-            cartSummary.setDiscount(discount);
-            cartSummary.setTax(tax);
-            cartSummary.setTotal(total);
+        try {
+            CartSummary cartSummary = cartSummaryRepository.findCartSummaryByUser(user.getId());
+            if (cartSummary == null) {
+                CartSummary cartSummaryNew = new CartSummary();
+                cartSummaryNew.setUser(user);
+                cartSummaryNew.setSubtotal(subtotal);
+                cartSummaryNew.setDiscount(discount);
+                cartSummaryNew.setTax(tax);
+                cartSummaryNew.setTotal(total);
+                cartSummaryRepository.save(cartSummaryNew);
+            } else {
+                cartSummary.setSubtotal(subtotal);
+                cartSummary.setDiscount(discount);
+                cartSummary.setTax(tax);
+                cartSummary.setTotal(total);
+                cartSummaryRepository.save(cartSummary);
+            }
+        } catch (Exception e) {
+            System.out.println("Error fetching cart summary: " + e.getMessage());
         }
-
-        cartSummaryRepository.save(cartSummary);
         return "Cart summary updated successfully.";
     }
 

@@ -27,7 +27,7 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
             AND c.status = :status
             """)
     List<Cart> findCartByUserId(@Param("userId") int userId,
-                                          @Param("status") CartStatus status);
+                                @Param("status") CartStatus status);
 
     @Modifying
     @Query("""
@@ -35,5 +35,8 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
             """)
     void deleteCartByProductId(@Param("productId") int productId);
 
-    List<Cart> findCartByUserId(int userId);
+    @Query("""
+               select c from Cart c where c.user.id = :userId
+            """)
+    List<Cart> findCartByUserId(@Param("userId") int userId);
 }

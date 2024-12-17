@@ -3,6 +3,10 @@ package com.sem2.sem2_project.controller;
 import com.sem2.sem2_project.dto.request.OrderUpdateStatusRequest;
 import com.sem2.sem2_project.dto.request.OrderRequest;
 import com.sem2.sem2_project.dto.response.OrderResponse;
+import com.sem2.sem2_project.model.Payment;
+import com.sem2.sem2_project.model.User;
+import com.sem2.sem2_project.repository.projection.PaymentProjection;
+import com.sem2.sem2_project.repository.projection.UserProjection;
 import com.sem2.sem2_project.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +38,16 @@ public class OrderController {
     @GetMapping("/all")
     public ResponseEntity<List<OrderResponse>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
+    }
+
+    @GetMapping("/infoUser")
+    public ResponseEntity<UserProjection> checkoutOrder() {
+        return ResponseEntity.ok(orderService.getInfoUser());
+    }
+
+    @GetMapping("/payments")
+    public ResponseEntity<List<PaymentProjection>> getPayments() {
+        return ResponseEntity.ok(orderService.getInfoPayments());
     }
 
 }

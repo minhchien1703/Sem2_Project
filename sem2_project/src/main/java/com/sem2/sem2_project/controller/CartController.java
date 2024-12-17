@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cart")
@@ -23,11 +24,15 @@ public class CartController {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
 
-    @PostMapping("/add/{userId}")
-    public ResponseEntity<String> addToCart(@PathVariable int userId, @RequestBody CartRequest cartRequest) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return ResponseEntity.ok(cartService.addToCart(cartRequest, user));
+    @PostMapping("/add")
+    public ResponseEntity<?> addToCart(@RequestBody CartRequest cartRequest) {
+        try{
+            User user = authenticationService.getCurrenAuthenticatedUser();
+            String responseMessage = cartService.addToCart(cartRequest, user);
+            return ResponseEntity.ok().body(Map.of("message", responseMessage));
+        } catch (RuntimeException error) {
+            return ResponseEntity.badRequest().body(Map.of("error", error.getMessage()));
+        }
     }
 
     @GetMapping("/all")
@@ -36,7 +41,7 @@ public class CartController {
     }
 
     @DeleteMapping("/del")
-    public ResponseEntity<String> delCart(@RequestParam(required = false) Integer id) {
+    public ResponseEntity<String> delCart(@RequestParam Integer id) {
         return ResponseEntity.ok(cartService.deleteProductFromCart(id));
     }
 

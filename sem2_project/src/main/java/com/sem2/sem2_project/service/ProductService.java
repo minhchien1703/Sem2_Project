@@ -35,5 +35,8 @@ public interface ProductService {
     List<ColorResponse> getColors();
 
     List<MaterialResponse> getMaterials();
+    List<ProductResponse> getProductByRelated(int category);
+
+    List<ProductResponse> getProductPages(int limit);
 
 }

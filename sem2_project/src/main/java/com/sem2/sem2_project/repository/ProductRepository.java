@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-    @Query(value = "select p.*, i.url from products p join images i on p.id = i.product_id order by p.id desc ", nativeQuery = true)
-    List<Product> getLimitedProducts();
+//    @Query(value = "select p.*, i.url from products p join images i on p.id = i.product_id order by p.id desc ", nativeQuery = true)
+//    List<Product> getLimitedProducts();
 
     List<Product> findTop5ByOrderByIdDesc();
 
@@ -34,4 +34,20 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p JOIN p.rooms r WHERE r.id = :roomId")
     List<Product> getProductsByRoomId(@Param("roomId") int roomId);
+    @Query("""
+                    Select p FROM Product p WHERE p.id = :productId and p.color.id = :colorId and p.size.id = :sizeId
+            """)
+    Product findByProductIdColorIdSizeId(Integer productId, Integer colorId, Integer sizeId);
+
+    @Query(value = """
+                select * FROM products  WHERE category_id = :categoryId limit 4  
+            """, nativeQuery = true)
+    List<Product> getProductsByCategory(@Param("categoryId") Integer categoryId);
+
+    @Query(value = """
+                SELECT * 
+                FROM products 
+                LIMIT :limit OFFSET :offset
+            """, nativeQuery = true)
+    List<Product> getProductListProjection(@Param("limit") Integer limit, @Param("offset") Integer offset);
 }
