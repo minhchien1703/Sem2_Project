@@ -22,4 +22,6 @@ public class ProductRequest {
     private int materialId;
     private List<Images> images;
     private List<Integer> roomsIds;
+
+
 }

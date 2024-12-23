@@ -5,6 +5,7 @@ import com.sem2.sem2_project.dto.response.CartResponse;
 import com.sem2.sem2_project.dto.response.ColorResponse;
 import com.sem2.sem2_project.dto.response.ProductResponse;
 import com.sem2.sem2_project.mappper.BasicMapper;
+import com.sem2.sem2_project.mappper.ProductMapper;
 import com.sem2.sem2_project.model.*;
 import com.sem2.sem2_project.model.enums.CartStatus;
 import com.sem2.sem2_project.model.enums.ProductStatus;
@@ -36,6 +37,7 @@ public class CartServiceImpl implements CartService {
     private final AuthenticationService authenticationService;
     private final ImageRepository imageRepository;
     private final ColorRepository colorRepository;
+    private final ProductMapper productMapper;
 
     @Override
     public String addToCart(CartRequest request, User user) {
@@ -73,13 +75,13 @@ public class CartServiceImpl implements CartService {
             CartResponse cartRes = new CartResponse();
             Optional<Product> product = productRepository.findById(cart.getProduct().getId());
             if (product.isPresent()) {
-                ProductResponse productRes = BasicMapper.INSTANCE.toProductResponse(product.get());
+                ProductResponse productRes = productMapper.toProductResponse(product.get());
                 productRes.setStatus(product.get().getStatus());
 
-                Images image = imageRepository.findImagesByProductId(product.get().getId());
-                if (image != null) {
-                    productRes.setImage(image.getUrl());
-                }
+//                Images image = imageRepository.findImagesByProductId(product.get().getId());
+//                if (image != null) {
+//                    productRes.setImage(image.getUrl());
+//                }
                 cartRes.setId(cart.getId());
                 cartRes.setQuantity(cart.getQuantity());
                 cartRes.setProduct(productRes);

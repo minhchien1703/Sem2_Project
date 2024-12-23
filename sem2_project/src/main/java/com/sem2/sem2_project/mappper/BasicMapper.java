@@ -35,6 +35,10 @@ public interface BasicMapper {
     MaterialResponse mapToMaterialResponse(Material material);
 
     Material mapToMaterial(Material materialRequest);
+
+    RoomResponse mapToRoomResponse(Room room);
+
+    Room maptoRoom(RoomRequest roomRequest);
     //    image
     Images toImageRequest(ImageRequest request);
 
@@ -62,4 +66,6 @@ public interface BasicMapper {
     List<ColorResponse> toColorResponseList(List<Color> colors);
 
     List<MaterialResponse> toMaterialResponseList(List<Material> materials);
+
+    List<RoomResponse> toRoomResponseList(List<Room> rooms);
 }

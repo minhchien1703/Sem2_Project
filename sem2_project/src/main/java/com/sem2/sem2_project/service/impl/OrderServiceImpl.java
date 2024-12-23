@@ -139,4 +139,9 @@ public class OrderServiceImpl implements OrderService {
         return paymentRepository.findAllPayments();
     }
 
+    @Override
+    public List<Status> getOrderStatuses() {
+        return statusRepository.findAll();
+    }
+
 }

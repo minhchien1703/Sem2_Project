@@ -3,6 +3,7 @@ package com.sem2.sem2_project.service;
 import com.sem2.sem2_project.dto.request.OrderUpdateStatusRequest;
 import com.sem2.sem2_project.dto.request.OrderRequest;
 import com.sem2.sem2_project.dto.response.OrderResponse;
+import com.sem2.sem2_project.model.Status;
 import com.sem2.sem2_project.repository.projection.PaymentProjection;
 import com.sem2.sem2_project.repository.projection.UserProjection;
 
@@ -20,4 +21,6 @@ public interface OrderService {
     UserProjection getInfoUser();
 
     List<PaymentProjection> getInfoPayments();
+
+    List<Status> getOrderStatuses();
 }

@@ -3,6 +3,7 @@ package com.sem2.sem2_project.service;
 import com.sem2.sem2_project.dto.request.ProductPriceRequest;
 import com.sem2.sem2_project.dto.request.ProductRequest;
 import com.sem2.sem2_project.dto.response.*;
+import com.sem2.sem2_project.model.Images;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -36,8 +37,13 @@ public interface ProductService {
 
     List<MaterialResponse> getMaterials();
 
+    List<RoomResponse> getRooms();
+
     List<ProductResponse> getProductByRelated(int category);
 
     List<ProductResponse> getProductPages(int limit);
+
+    public List<Images> getImagesByProductId(int id);
+
 
 }

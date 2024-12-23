@@ -71,6 +71,12 @@ public abstract class ProductMapper {
     @Mapping(target="rooms", source = "roomsIds", qualifiedByName = "mapRooms")
     public abstract Product toProduct(ProductRequest productRequest);
 
+    @Mapping(target="category", source = "categoryId", qualifiedByName = "mapCategory")
+    @Mapping(target="size", source = "sizeId", qualifiedByName = "mapSize")
+    @Mapping(target="color", source = "colorId", qualifiedByName = "mapColor")
+    @Mapping(target="material", source = "materialId", qualifiedByName = "mapMaterial")
+    @Mapping(target="rooms", source = "roomsIds", qualifiedByName = "mapRooms")
+    public abstract Product updateProductFromDto(ProductRequest productRequest, @MappingTarget Product product);
 
     public abstract ProductResponse toProductResponse (Product product);
 

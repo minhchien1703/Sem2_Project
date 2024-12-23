@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/product")
@@ -40,7 +42,7 @@ public class ProductController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ProductResponse>> getProducts() {
-        emailService.sendOrderConfirmation("sonnt0212@gmail.com","testing");
+        //emailService.sendOrderConfirmation("sonnt0212@gmail.com","testing");
         return ResponseEntity.ok(productService.getProducts());
     }
 
@@ -81,6 +83,18 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable int id, @RequestBody ProductRequest productRequest) {
+        return ResponseEntity.ok(productService.updateProduct(id, productRequest));
+    }
+
+    @PutMapping(value ="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable int id, @RequestPart("jsonData") ProductRequest productRequest,
+                                                         @RequestPart("files") List<MultipartFile> files) {
+        try{
+            productRequest.setImages(Stream.concat(productRequest.getImages().stream(),cloudinaryService.uploadFiles(files).stream()).collect(Collectors.toList()));
+            }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         return ResponseEntity.ok(productService.updateProduct(id, productRequest));
     }
 

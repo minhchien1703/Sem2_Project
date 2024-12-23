@@ -28,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     private final ImageRepository imageRepository;
     private final SizeRepository sizeRepository;
     private final CloudinaryService cloudinaryService;
+    private final ProductMapper productMapper;
 
     @Override
     public ProductResponse addProduct(ProductRequest productRequest) {
@@ -65,7 +66,8 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse updateProduct(int id, ProductRequest productRequest) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-        product = ProductMapper.getInstance().toProduct(productRequest);
+        ProductMapper.getInstance().updateProductFromDto(productRequest, product);
+        List<Images> newImages = Optional.ofNullable(productRequest.getImages()).orElse(Collections.emptyList());
         productRepository.save(product);
         return ProductMapper.getInstance().toProductResponse(product);
     }
@@ -139,17 +141,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<RoomResponse> getRooms() {
+        List<Room> rooms = roomRepository.findAll();
+        return BasicMapper.INSTANCE.toRoomResponseList(rooms);
+    }
+
+    @Override
     public List<ProductResponse> getProductByRelated(int category) {
         List<Product> productList = productRepository.getProductsByCategory(category);
-        List<ProductResponse> productResponses = BasicMapper.INSTANCE.toProductResponseList(productList);
 
-        for (ProductResponse product : productResponses) {
-            Images image = imageRepository.findImagesByProductId(product.getId());
-            if (image != null) {
-                product.setImage(image.getUrl());
-            }
-        }
-        return productResponses;
+//        for (ProductResponse product : productResponses) {
+//            Images image = imageRepository.findImagesByProductId(product.getId());
+//            if (image != null) {
+//                product.setImage(image.getUrl());
+//            }
+//        }
+        return productMapper.toProductResponseList(productList);
     }
 
     @Override
@@ -157,16 +164,19 @@ public class ProductServiceImpl implements ProductService {
         int limit = 5;
         int offset = page * limit;
         List<Product> products = productRepository.getProductListProjection(limit, offset);
-        List<ProductResponse> productResponses = BasicMapper.INSTANCE.toProductResponseList(products);
 
-        for (ProductResponse product : productResponses) {
-            Images image = imageRepository.findImagesByProductId(product.getId());
-            if (image != null) {
-                product.setImage(image.getUrl());
-            }
-        }
-        return productResponses;
+//        for (ProductResponse product : productResponses) {
+//            Images image = imageRepository.findImagesByProductId(product.getId());
+//            if (image != null) {
+//                product.setImage(image.getUrl());
+//            }
+//        }
+        return productMapper.toProductResponseList(products);
     }
 
+    @Override
+    public List<Images> getImagesByProductId(int id) {
+        return imageRepository.findImagesByProductId(id);
+    }
 
 }
