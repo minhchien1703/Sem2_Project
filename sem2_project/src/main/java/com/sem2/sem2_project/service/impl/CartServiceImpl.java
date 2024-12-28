@@ -1,6 +1,7 @@
 package com.sem2.sem2_project.service.impl;
 
 import com.sem2.sem2_project.dto.request.CartRequest;
+import com.sem2.sem2_project.dto.request.ProductRequest;
 import com.sem2.sem2_project.dto.response.CartResponse;
 import com.sem2.sem2_project.dto.response.ColorResponse;
 import com.sem2.sem2_project.dto.response.ProductResponse;
@@ -35,19 +36,33 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepository;
     private final AuthenticationService authenticationService;
     private final ImageRepository imageRepository;
-    private final ColorRepository colorRepository;
 
     @Override
     public String addToCart(CartRequest request, User user) {
-        Product product = productRepository.findByProductIdColorIdSizeId(request.getProductId(), request.getColorId(), request.getSizeId());
-        if (product == null) {
-            throw new RuntimeException( "Product is out of store!");
-        }
-        Cart cart = cartRepository.findCartByProductIdAndUserId(product.getId(), user.getId());
-        if (cart != null) {
-            log.info("The product is already in the cart!");
-            return "The product is already in the cart!";
+        Product product = null;
+        if (request.getColorId() > 0) {
+            product = productRepository.findByProductIdColorIdSizeId(request.getProductId(), request.getColorId(), request.getSizeId());
         } else {
+            product = productRepository.findById(request.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+        }
+
+        if (product.getStatus().equals(ProductStatus.OUT_OF_STOCK)) {
+            return "The product is out of stock";
+        }
+
+        Cart cart = cartRepository.findCartByProductIdAndUserId(product.getId(), user.getId());
+        if (cart != null && cart.getStatus().equals(CartStatus.ACTIVE)) {
+            return "The product is already in the cart!";
+        }
+
+        if (cart != null && cart.getStatus().equals(CartStatus.DELETED)) {
+            cart.setStatus(CartStatus.ACTIVE);
+            cartRepository.save(cart);
+            return "Cart successfully added to the cart";
+        }
+
+        if(cart == null) {
             cart = new Cart();
             cart.setUser(user);
             cart.setProduct(product);
@@ -58,9 +73,11 @@ public class CartServiceImpl implements CartService {
                 cart.setQuantity(1);
             }
             cart.setSubTotal(product.getPrice() * cart.getQuantity());
+            cartRepository.save(cart);
+            return "Cart successfully added to the cart";
         }
-        cartRepository.save(cart);
-        return "Cart successfully added to the cart";
+
+        return "Cart already exists!";
     }
 
     @Override
@@ -89,10 +106,14 @@ public class CartServiceImpl implements CartService {
         return cartResponses;
     }
 
+
+
     @Transactional
     @Override
-    public String deleteProductFromCart(int productId) {
-        cartRepository.deleteCartByProductId(productId);
+    public String deleteProductFromCart(int productId, int userId) {
+        Cart cart = cartRepository.findCartByProductIdAndUserId(productId, userId);
+        cart.setStatus(CartStatus.DELETED);
+        cartRepository.save(cart);
         return "Delete cart successfully";
     }
 

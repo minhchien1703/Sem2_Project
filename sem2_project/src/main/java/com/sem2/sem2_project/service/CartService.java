@@ -11,7 +11,8 @@ public interface CartService {
 
     List<CartResponse> getAllCartsByUserId();
 
-    String deleteProductFromCart(int productId);
+    String deleteProductFromCart(int productId, int userId);
 
     String updateCartItemQuantity(CartRequest cartRequest);
+
 }

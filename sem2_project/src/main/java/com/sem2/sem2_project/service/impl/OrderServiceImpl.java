@@ -2,8 +2,7 @@ package com.sem2.sem2_project.service.impl;
 
 import com.sem2.sem2_project.dto.request.OrderUpdateStatusRequest;
 import com.sem2.sem2_project.dto.request.OrderRequest;
-import com.sem2.sem2_project.dto.response.OrderDetailsResponse;
-import com.sem2.sem2_project.dto.response.OrderResponse;
+import com.sem2.sem2_project.dto.response.*;
 import com.sem2.sem2_project.mappper.BasicMapper;
 import com.sem2.sem2_project.model.*;
 import com.sem2.sem2_project.model.enums.CartStatus;
@@ -11,6 +10,7 @@ import com.sem2.sem2_project.repository.*;
 import com.sem2.sem2_project.repository.projection.PaymentProjection;
 import com.sem2.sem2_project.repository.projection.UserProjection;
 import com.sem2.sem2_project.service.AuthenticationService;
+import com.sem2.sem2_project.service.EmailService;
 import com.sem2.sem2_project.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,9 @@ public class OrderServiceImpl implements OrderService {
     private final AuthenticationService authenticationService;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
-    private final CartSummaryRepository cartSummaryRepository;
+    private final EmailService emailService;
+    private final CartSummaryServiceImpl cartSummaryServiceImpl;
+    private final ImageRepository imageRepository;
 
     @Override
     public String createOrder(OrderRequest orderRequest) {
@@ -42,26 +45,32 @@ public class OrderServiceImpl implements OrderService {
         Payment payment = paymentRepository.findById(orderRequest.getPaymentMethodId())
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
+
         Order order = new Order();
         order.setMessage(orderRequest.getMessage());
         order.setShippingAddress(orderRequest.getShippingAddress());
         order.setPayment(payment);
         order.setUser(user);
         order.setStatus(status);
-        CartSummary cartSummary = cartSummaryRepository.findCartSummaryByUser(user.getId());
+
+        order = orderRepository.save(order);
+        CartSummary cartSummary = cartSummaryServiceImpl.createCartSummary(order.getId(), orderRequest.getUserId());
+
         order.setTotalAmount(cartSummary.getTotal());
         order = orderRepository.save(order);
 
         List<Cart> carts = cartRepository.findCartByUserId(user.getId(), CartStatus.ACTIVE);
         for (Cart item : carts) {
-           Product product = productRepository.findById(item.getProduct().getId())
-                   .orElseThrow(() -> new RuntimeException("Product not found"));
-            Cart cart = cartRepository.findCartByProductIdAndUserId(product.getId(), user.getId());
-            double productTotal = product.getPrice() * cart.getQuantity();
-            OrderDetails orderDetails = new OrderDetails(order, product, cart.getQuantity(), productTotal);
+            Product product = productRepository.findById(item.getProduct().getId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            double productTotal = product.getPrice() * item.getQuantity();
+            OrderDetails orderDetails = new OrderDetails(order, product, item.getQuantity(), productTotal);
             orderDetailsRepository.save(orderDetails);
-            cartRepository.delete(cart);
+            item.setOrder(order);
+            item.setStatus(CartStatus.DELETED);
+            cartRepository.save(item);
         }
+        emailService.sendOrderConfirmation("chienminh1703@gmail.com", "Your order number 38HF654DWR confirm success!");
         return "Create order successful";
     }
 
@@ -94,7 +103,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public List<OrderResponse> getAllOrders() {
+    public List<OrderResponse> getOrderByUserId() {
         User user = authenticationService.getCurrenAuthenticatedUser();
         List<Order> orders = orderRepository.findByUserId(user.getId());
 
@@ -109,34 +118,59 @@ public class OrderServiceImpl implements OrderService {
             orderResponse.setStatus(order.getStatus().getStatus());
             orderResponse.setShippingAddress(order.getShippingAddress());
             orderResponse.setPaymentName(order.getPayment().getMethodName());
+            orderResponse.setCreatedAt(order.getCreatedAt());
 
-            List<OrderDetails> orderDetailsList = orderDetailsRepository.findByOrderId(order.getId());
-            List<OrderDetailsResponse> orderDetailsResponses = new ArrayList<>();
-
-            for (OrderDetails oDetail : orderDetailsList) {
-                OrderDetailsResponse orderDetailsResponse = new OrderDetailsResponse();
-                orderDetailsResponse.setId(oDetail.getId());
-                orderDetailsResponse.setProductName(oDetail.getProducts().getName());
-                orderDetailsResponse.setProductDescription(oDetail.getProducts().getDescription());
-                orderDetailsResponse.setQuantity(oDetail.getQuantity());
-                orderDetailsResponse.setPrice(oDetail.getPrice());
-                orderDetailsResponses.add(orderDetailsResponse);
-            }
-            orderResponse.setOrderDetails(orderDetailsResponses);
             orderResponses.add(orderResponse);
         }
         return orderResponses;
     }
 
     @Override
-    public UserProjection getInfoUser() {
-        User user = authenticationService.getCurrenAuthenticatedUser();
-        return userRepository.findUserProjectionById(user.getId());
+    public UserProjection getInfoUser(int userId) {
+        return userRepository.findUserProjectionById(userId);
     }
 
     @Override
     public List<PaymentProjection> getInfoPayments() {
         return paymentRepository.findAllPayments();
+    }
+
+    @Override
+    public OrderDetailsResponse orderDetails(int orderId, int userId) {
+        OrderDetailsResponse orderDetailsResponse = new OrderDetailsResponse();
+
+        Order order = orderRepository.findByOrderAndUserId(orderId, userId);
+        orderDetailsResponse.setOrderId(order.getId());
+        orderDetailsResponse.setShippingAddress(order.getShippingAddress());
+
+        Payment payment = paymentRepository.findById(order.getPayment().getId())
+                .orElseThrow(() -> new RuntimeException("Payment not found"));
+        orderDetailsResponse.setPaymentName(payment.getMethodName());
+
+        List<Cart> carts = cartRepository.findByOrderUserId(orderId, userId, CartStatus.DELETED);
+        List<CartResponse> cartResponses = new ArrayList<>();
+        for (Cart cart : carts) {
+            CartResponse cartRes = new CartResponse();
+            Optional<Product> product = productRepository.findById(cart.getProduct().getId());
+            if (product.isPresent()) {
+                ProductResponse productRes = BasicMapper.INSTANCE.toProductResponse(product.get());
+                productRes.setStatus(product.get().getStatus());
+
+                Images image = imageRepository.findImagesByProductId(product.get().getId());
+                if (image != null) {
+                    productRes.setImage(image.getUrl());
+                }
+                cartRes.setId(cart.getId());
+                cartRes.setQuantity(cart.getQuantity());
+                cartRes.setProduct(productRes);
+                cartRes.setColor(product.get().getColor());
+                cartRes.setSize(product.get().getSize());
+                cartRes.setSubTotal(cart.getSubTotal());
+                cartResponses.add(cartRes);
+            }
+        }
+        orderDetailsResponse.setOrderDetails(cartResponses);
+        return orderDetailsResponse;
     }
 
 }

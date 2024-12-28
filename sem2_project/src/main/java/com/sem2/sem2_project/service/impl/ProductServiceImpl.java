@@ -63,8 +63,8 @@ public class ProductServiceImpl implements ProductService {
             for (Integer cId : productRequest.getColorIds()) {
                 Color color = colorRepository.findById(cId)
                         .orElseThrow(() -> new RuntimeException("Color not found with id: " + cId));
-                Product productNew = new Product();
 
+                Product productNew = new Product();
                 productNew.setId(productSaved.getId());
                 productNew.setName(productSaved.getName());
                 productNew.setDescription(productSaved.getDescription());
@@ -72,7 +72,6 @@ public class ProductServiceImpl implements ProductService {
                 productNew.setQuantity(productSaved.getQuantity());
                 productNew.setWeight(productSaved.getWeight());
                 productNew.setSale(productSaved.getSale());
-                productNew.setType(productSaved.getType());
                 productNew.setType(productSaved.getType());
                 productNew.setStatus(ProductStatus.AVAILABLE);
                 productNew.setRating(5);
@@ -174,7 +173,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponse> getProductPages(int page) {
         int limit = 5;
-        int offset = page * limit;
+        int offset = (page - 1) * limit;
         List<Product> products = productRepository.getProductListProjection(limit, offset);
         List<ProductResponse> productResponses = BasicMapper.INSTANCE.toProductResponseList(products);
 

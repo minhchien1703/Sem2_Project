@@ -4,6 +4,7 @@ import com.sem2.sem2_project.dto.request.*;
 import com.sem2.sem2_project.dto.response.*;
 import com.sem2.sem2_project.model.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.SubclassMappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -29,12 +30,11 @@ public interface BasicMapper {
 
     List<ImageResponse> toImageResponseList(List<Images> images);
 
-    //    orders
-    Order orderRequestToOrder(OrderRequest request);
-
-    ProductResponse toProductResponse(Product product);
 
     //    product
+    ProductResponse toProductResponse(Product product);
+
     List<ProductResponse> toProductResponseList(List<Product> productList);
 
+    SummaryResponse toSummaryResponse(CartSummary cartSummary);
 }

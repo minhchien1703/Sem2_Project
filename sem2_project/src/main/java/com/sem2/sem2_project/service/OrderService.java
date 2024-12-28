@@ -2,6 +2,8 @@ package com.sem2.sem2_project.service;
 
 import com.sem2.sem2_project.dto.request.OrderUpdateStatusRequest;
 import com.sem2.sem2_project.dto.request.OrderRequest;
+import com.sem2.sem2_project.dto.response.CartResponse;
+import com.sem2.sem2_project.dto.response.OrderDetailsResponse;
 import com.sem2.sem2_project.dto.response.OrderResponse;
 import com.sem2.sem2_project.repository.projection.PaymentProjection;
 import com.sem2.sem2_project.repository.projection.UserProjection;
@@ -15,9 +17,11 @@ public interface OrderService {
 
     boolean deleteOrder(int orderId);
 
-    List<OrderResponse> getAllOrders();
+    List<OrderResponse> getOrderByUserId();
 
-    UserProjection getInfoUser();
+    UserProjection getInfoUser(int userId);
 
     List<PaymentProjection> getInfoPayments();
+
+    OrderDetailsResponse orderDetails(int orderId, int userId);
 }

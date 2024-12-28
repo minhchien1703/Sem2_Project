@@ -17,12 +17,12 @@ import java.util.Map;
 public class UploadController {
     private final CloudinaryService cloudinaryService;
 
-    @PostMapping("/upload/{productId}")
-    public ResponseEntity<List<Map<String, String>>> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @PathVariable int productId) {
+    @PostMapping("/products/{productId}")
+    public ResponseEntity<List<Map<String, String>>> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("productId") int productId) {
         List<Map<String, String>> uploadResults = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
-                Map<String, String> result = cloudinaryService.uploadFile(file, productId);
+                Map<String, String> result = cloudinaryService.uploadProductImages(file, productId);
                 uploadResults.add(result);
             } catch (IOException e) {
                 return ResponseEntity.status(500).body(null);
@@ -31,7 +31,16 @@ public class UploadController {
         return ResponseEntity.ok(uploadResults);
     }
 
-    // Delete file by publicId
+    @PostMapping("/users/{userId}")
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file, @PathVariable("userId") int userId) {
+        try {
+            Map<String, String> uploadResults = cloudinaryService.uploadUserImage(file, userId);
+            return ResponseEntity.ok(uploadResults);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
     @DeleteMapping("/delete/{publicId}")
     public ResponseEntity<String> deleteFile(@PathVariable String publicId) {
         try {

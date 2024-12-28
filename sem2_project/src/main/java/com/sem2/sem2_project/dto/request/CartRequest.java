@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class CartRequest {
+    private int userId;
     private int productId;
     private int colorId;
     private int sizeId;

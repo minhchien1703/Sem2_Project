@@ -1,6 +1,7 @@
 package com.sem2.sem2_project.controller;
 
 import com.sem2.sem2_project.dto.request.CartRequest;
+import com.sem2.sem2_project.dto.request.OrderDetailSummaryRequest;
 import com.sem2.sem2_project.dto.response.CartResponse;
 import com.sem2.sem2_project.model.User;
 import com.sem2.sem2_project.repository.UserRepository;
@@ -25,7 +26,7 @@ public class CartController {
     private final UserRepository userRepository;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addToCart(@RequestBody CartRequest cartRequest) {
+    public ResponseEntity<?> addToCartByProduct(@RequestBody CartRequest cartRequest) {
         try{
             User user = authenticationService.getCurrenAuthenticatedUser();
             String responseMessage = cartService.addToCart(cartRequest, user);
@@ -41,8 +42,8 @@ public class CartController {
     }
 
     @DeleteMapping("/del")
-    public ResponseEntity<String> delCart(@RequestParam Integer id) {
-        return ResponseEntity.ok(cartService.deleteProductFromCart(id));
+    public ResponseEntity<String> delCart(@RequestBody CartRequest cartRequest) {
+        return ResponseEntity.ok(cartService.deleteProductFromCart(cartRequest.getProductId(), cartRequest.getUserId()));
     }
 
     @PutMapping("/update")
@@ -50,5 +51,6 @@ public class CartController {
         System.out.println(cartRequest.getProductId());
         return ResponseEntity.ok(cartService.updateCartItemQuantity(cartRequest));
     }
+
 
 }

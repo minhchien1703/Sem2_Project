@@ -6,11 +6,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 public class OrderDetailsResponse {
-    private int id;
-    private String productName;
-    private String productDescription;
-    private int quantity;
-    private double price;
+    private int orderId;
+    private String shippingAddress;
+    private String paymentName;
+    private List<CartResponse> orderDetails;
 }

@@ -1,25 +1,24 @@
 package com.sem2.sem2_project.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "cart_summary")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CartSummary {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+    @Column(name = "subtotal")
     private double subtotal;
     private double discount;
     private double tax;

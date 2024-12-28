@@ -29,6 +29,16 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
     List<Cart> findCartByUserId(@Param("userId") int userId,
                                 @Param("status") CartStatus status);
 
+    @Query("""
+            SELECT c FROM Cart c
+            WHERE c.user.id = :userId
+            AND c.status = :status
+            And c.order.id = :orderId
+            """)
+    List<Cart> findByOrderUserId(@Param("orderId") Integer orderId,
+                                 @Param("userId") int userId,
+                                 @Param("status") CartStatus status);
+
     @Modifying
     @Query("""
             delete FROM Cart c WHERE c.product.id = :productId

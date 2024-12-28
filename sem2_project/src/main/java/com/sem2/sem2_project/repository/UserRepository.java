@@ -20,5 +20,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 """)
     User findByPhone(@Param("phone") String phone);
 
-    UserProjection findUserProjectionById(int id);
+
+    UserProjection findUserProjectionById(@Param("id") Integer id);
 }

@@ -27,6 +27,8 @@
         private String password;
         private String address;
         private String phone;
+        @Column(name = "user_image")
+        private String userImage;
 
         @Enumerated(EnumType.STRING)
         private Roles role;

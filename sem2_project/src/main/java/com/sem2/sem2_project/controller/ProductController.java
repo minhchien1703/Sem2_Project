@@ -53,7 +53,7 @@ public class ProductController {
     }
 
     @GetMapping("/page/{page}")
-    public ResponseEntity<List<ProductResponse>> getProductsByPage(@PathVariable("page") int page) {
+    public ResponseEntity<List<ProductResponse>> getProductsByPage(@PathVariable("page") Integer page) {
         return ResponseEntity.ok(productService.getProductPages(page));
     }
 
